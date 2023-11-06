@@ -6,6 +6,7 @@ ordernumber:{type:String},
   customers: {
     type: mongoose.Schema.ObjectId,
        ref: "Customer",
+       default: null,
    },
   options:{type:String},
 
@@ -37,9 +38,14 @@ ordernumber:{type:String},
   date: { type: Date, default: Date.now },
   paymentstatus:{
     type: String,
-    default: 'notpaid',
+    default: null,
   },
   hold:{
+    type:String,
+    default:null,
+  },
+  paymentType:
+  {
     type:String,
     default:null,
   }

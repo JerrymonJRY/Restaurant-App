@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Swal from 'sweetalert2';
+import "datatables.net-dt/js/dataTables.dataTables"
+import "datatables.net-dt/css/jquery.dataTables.min.css"
 
 import Login from './Components/userPages/login'
 import Dashboard from './Components/Dashboard/dashboard'

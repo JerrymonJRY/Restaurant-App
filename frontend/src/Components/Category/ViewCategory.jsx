@@ -8,8 +8,13 @@ import { redirect, useNavigate,Link } from "react-router-dom";
 
 
 const ViewCategory =() =>{
+
     const [data , setData] =useState([]);
     const navigate = useNavigate();
+
+    $(document).ready(function () {
+      $('#myTable').DataTable();
+   });
    
     useEffect( ()=>{
 
@@ -53,7 +58,7 @@ const ViewCategory =() =>{
                     <Link to="/addingredientfoodcategory" className="btn btn-success">Add +</Link>
                 </div><br />
                   
-                <table id="example" className="table table-striped table-bordered" >
+                <table id="myTable" className="table table-striped table-bordered" >
                       <thead>
                         <tr>
                           <th>Category Name</th>

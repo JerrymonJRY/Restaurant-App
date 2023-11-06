@@ -56,36 +56,31 @@ const ViewPosOrder =() =>{
                       
                         </tr>
                       </thead>
-                   <tbody>
-                   {
-                posfood.map((order) => (
-                    <tr>
-                          <td>{order.ordernumber}</td>
-                        <td>{order.options}</td>
-                    
-                               <td>{order.customerDetails.customername}</td>
-                               <td>{order.tableDetails.tablename}</td>
-                               <td>{order.waiterDetails.waitername}</td>
-                               <td>{order.total}</td>
-                               <td>{order.vatAmount}</td>
-                               <td>{order.grandTotal}</td>
-                              
-                
+                      <tbody>
+  {posfood.map((order) => (
+    <tr key={order._id}>
+      <td>{order.ordernumber}</td>
+      <td>{order.options}</td>
 
+      <td>{order.customerDetails ? order.customerDetails.customername : 'N/A'}</td>
+      <td>{order.tableDetails ? order.tableDetails.tablename : 'N/A'}</td>
+      <td>{order.waiterDetails ? order.waiterDetails.waitername : 'N/A'}</td>
+      <td>{order.total}</td>
+      <td>{order.vatAmount}</td>
+      <td>{order.grandTotal}</td>
 
+      <td>
+        <Link to={`/posorderdetails/${order._id}`} className="btn btn-primary">
+          Edit
+        </Link>
+        <button onClick={(e) => handleDelete(order._id)} className="btn btn-danger">
+          Delete
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
 
-                              
-                               
-                                <td>
-                                <Link to={`/posorderdetails/${order._id}`} className="btn btn-primary">Edit</Link>
-                                    <button onClick={  (e)=>handleDelete(order._id)} className="btn btn-danger">Delete</button>
-                                </td>
-
-                            </tr>
-
-                        ))
-                    }
-                   </tbody>
                     </table>
                   </div>
                 </div>

@@ -1,5 +1,5 @@
 const asyncHandler =require('express-async-handler');
-
+const mongoose = require('mongoose');
 const foodcategory =require('../models/foodcategoryModel');
 const Waiter =require('../models/waiterModel');
 const Table =require('../models/tableModel');
@@ -111,6 +111,7 @@ const insertPos =asyncHandler(async(req,res) =>{
     if (exists) {
       return res.status(400).json({ error: 'ID number already exists' });
     }
+    let paymentstatus ="notpaid";
 
     const newEntry = new Pos({ 
       ordernumber: nextIdNumber,
@@ -122,6 +123,7 @@ const insertPos =asyncHandler(async(req,res) =>{
       vatAmount:vatAmount,
       waiterId:waiterId,
       tableId:tableId,
+      paymentstatus:paymentstatus,
 
 
      
@@ -131,27 +133,9 @@ const insertPos =asyncHandler(async(req,res) =>{
 
  
 
-  // const cartz =req.body.cart;
-  // console.log(cartz);
-  //  const carts =[];
+  
 
-  //  for (let i = 0; i < cartz.length; i++) {
-  //   let object = {};
-  //   object.foodmenuId = cartz[i]._id;
-  //   object.salesprice = cartz[i].salesprice;
-  //   object.quantity = cartz[i].quantity;
-   
-  //   carts.push(object);
-  // }
-
-  //  console.log(carts);
-
-
-    // // Create a new FoodItem document and save it to the database
-    // const newFoodItem = new Pos(data);
-      ///await newFoodItem.save();
-
-    res.json({ message: 'Data inserted successfully' });
+    res.json(newEntry);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while inserting data' });
@@ -188,7 +172,10 @@ const getAllPos =asyncHandler(async(req,res) =>{
         }
       },
       {
-        $unwind: "$customerDetails"
+        $unwind: {
+          path: "$customerDetails",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        }
       },
       {
         $lookup: {
@@ -210,7 +197,11 @@ const getAllPos =asyncHandler(async(req,res) =>{
         }
       },
       {
-        $unwind: "$tableDetails"
+        // $unwind: "$tableDetails"
+        $unwind: {
+          path: "$tableDetails",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        }
       },
       {
         $group: {
@@ -231,16 +222,7 @@ const getAllPos =asyncHandler(async(req,res) =>{
             }
           },
           customerDetails: { $first: "$customerDetails" },
-        //  tableDetails: { $first: "$tableDetails" },
-        tableDetails: {
-          $first: {
-            $cond: {
-              if: { $eq: ["$tableDetails", []] },
-              then: null, // or any default value for empty tableDetails
-              else: "$tableDetails"
-            }
-          }
-        },
+
           waiterDetails: { $first: "$waiterDetails" }
         }
       }
@@ -272,7 +254,11 @@ const runningOrder =asyncHandler(async(req,res) =>{
         },
       },
       {
-        $unwind: '$table',
+        //$unwind: '$table',
+        $unwind: {
+          path: "$table",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        }
       },
       {
         $lookup: {
@@ -300,5 +286,423 @@ const runningOrder =asyncHandler(async(req,res) =>{
 
 })
 
+const completePaymeny =asyncHandler(async(req,res) =>{
+  const { id } = req.params;
 
-module.exports = {getposCategory,getPosWaiter,getCustomer,getTable,getposFooditems,insertPos,getAllPos,runningOrder};
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid ObjectId' });
+    }
+    const pos = await Pos.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(id), // Match documents with the specified _id
+        },
+      },
+      {
+        $unwind: "$cart" // Flatten the cart array
+      },
+      {
+        $lookup: {
+          from: "foodmenus",
+          localField: "cart.foodmenuId",
+          foreignField: "_id",
+          as: "menuItemDetails"
+        },
+      },
+      {
+        $unwind: "$menuItemDetails" // Unwind the menuItemDetails array
+      },
+      {
+        $lookup: {
+          from: "customers",
+          localField: "customers",
+          foreignField: "_id",
+          as: "customerDetails"
+        },
+      },
+      {
+        $unwind: {
+          path: "$customerDetails",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        },
+      },
+      {
+        $lookup: {
+          from: "waiters",
+          localField: "waiterId",
+          foreignField: "_id",
+          as: "waiterDetails"
+        },
+      },
+      {
+        $unwind: "$waiterDetails"
+      },
+      {
+        $lookup: {
+          from: "tables",
+          localField: "tableId",
+          foreignField: "_id",
+          as: "tableDetails"
+        },
+      },
+      {
+        // $unwind: "$tableDetails"
+        $unwind: {
+          path: "$tableDetails",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          ordernumber: { $first: "$ordernumber" },
+          options: { $first: "$options" },
+          total: { $first: "$total" },
+          grandTotal: { $first: "$grandTotal" },
+          vatAmount: { $first: "$vatAmount" },
+          createdAt: { $first: "$createdAt" },
+          updatedAt: { $first: "$updatedAt" },
+          cart: {
+            $push: {
+              foodmenuId: "$cart.foodmenuId",
+              salesprice: "$cart.salesprice",
+              quantity: "$cart.quantity",
+              menuItemDetails: "$menuItemDetails"
+            }
+          },
+          customerDetails: { $first: "$customerDetails" },
+  
+          waiterDetails: { $first: "$waiterDetails" }
+        }
+      },
+    ]);
+  
+    res.json(pos);
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+  
+ 
+
+});
+
+
+const updatePayment =asyncHandler(async(req,res) =>
+{
+  try {
+    // Assuming you have a model named "Pos"
+    const { id } = req.params; // Get the document ID from the request parameters
+    const { paymentType } = req.body; // Get updated data from the request body
+      let paymentstatus ='paid';
+    const updateResult = await Pos.updateOne(
+      { _id: id }, // Match the document by its ID
+      {
+        $set: {
+          paymentstatus:paymentstatus, // Update the "paymentstatus" field
+          paymentType,  // Update the "paymentType" field
+        },
+      }
+    );
+  
+    if (updateResult.nModified === 0) {
+      // Check if any document was modified (nModified === 0 indicates no changes)
+      return res.status(404).json({ error: 'No matching document found' });
+    }
+  
+    // You can also retrieve the updated document if needed
+    const updatedDocument = await Pos.findById(id);
+  
+    res.json(updatedDocument);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+  
+});
+
+
+const getKot =asyncHandler(async(req,res) =>
+{
+  const { id } = req.params;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid ObjectId' });
+    }
+    const pos = await Pos.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(id), // Match documents with the specified _id
+        },
+      },
+      {
+        $unwind: "$cart" // Flatten the cart array
+      },
+      {
+        $lookup: {
+          from: "foodmenus",
+          localField: "cart.foodmenuId",
+          foreignField: "_id",
+          as: "menuItemDetails"
+        },
+      },
+      {
+        $unwind: "$menuItemDetails" // Unwind the menuItemDetails array
+      },
+      {
+        $lookup: {
+          from: "customers",
+          localField: "customers",
+          foreignField: "_id",
+          as: "customerDetails"
+        },
+      },
+      {
+        $unwind: {
+          path: "$customerDetails",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        },
+      },
+      {
+        $lookup: {
+          from: "waiters",
+          localField: "waiterId",
+          foreignField: "_id",
+          as: "waiterDetails"
+        },
+      },
+      {
+        $unwind: "$waiterDetails"
+      },
+      {
+        $lookup: {
+          from: "tables",
+          localField: "tableId",
+          foreignField: "_id",
+          as: "tableDetails"
+        },
+      },
+      {
+        // $unwind: "$tableDetails"
+        $unwind: {
+          path: "$tableDetails",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          ordernumber: { $first: "$ordernumber" },
+          options: { $first: "$options" },
+          total: { $first: "$total" },
+          grandTotal: { $first: "$grandTotal" },
+          vatAmount: { $first: "$vatAmount" },
+          createdAt: { $first: "$createdAt" },
+          updatedAt: { $first: "$updatedAt" },
+          cart: {
+            $push: {
+              foodmenuId: "$cart.foodmenuId",
+              salesprice: "$cart.salesprice",
+              quantity: "$cart.quantity",
+              menuItemDetails: "$menuItemDetails"
+            }
+          },
+          customerDetails: { $first: "$customerDetails" },
+  
+          waiterDetails: { $first: "$waiterDetails" }
+        }
+      },
+    ]);
+  
+    res.json(pos);
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+
+
+});
+
+const insertPoshold =asyncHandler(async(req,res) =>{
+  try {
+    const  {customers,options,grandTotal,cart,vatAmount,total,foodoption,waiterId,tableId}  = req.body;
+  console.log(req.body);
+
+ const sequence = await Pos.findOne({}).sort('-ordernumber'); // Find the latest ID
+
+    let nextIdNumber = 'Burp01001023001';
+
+    if (sequence && sequence.ordernumber) {
+      // Extract and increment the numeric part of the latest ID
+      const lastIdNumber = sequence.ordernumber;
+      const numericPart = lastIdNumber.substring(11); // Extract the numeric part
+      const nextNumericValue = parseInt(numericPart, 10) + 1;
+      nextIdNumber = `Burp0100102${nextNumericValue.toString().padStart(3, '0')}`;
+    }
+
+    // Check if the ID number already exists
+    const exists = await Pos.findOne({ ordernumber: nextIdNumber });
+
+    if (exists) {
+      return res.status(400).json({ error: 'ID number already exists' });
+    }
+    let hold ="hold";
+
+    const newEntry = new Pos({ 
+      ordernumber: nextIdNumber,
+      customers:customers,
+      options:foodoption,
+      cart:cart,
+      total:total,
+      grandTotal:grandTotal,
+      vatAmount:vatAmount,
+      waiterId:waiterId,
+      tableId:tableId,
+      hold:hold,
+
+
+     
+    
+    });
+    await newEntry.save();
+
+ 
+
+  
+
+    res.json(newEntry);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while inserting data' });
+  }
+});
+
+const getHold =asyncHandler(async(req,res) =>
+{
+  try {
+    const holdingorder = await Pos.aggregate([
+      {
+        $match: {
+          hold: "hold"
+        }
+      },
+
+      {
+        $lookup: {
+          from: 'tables',
+          localField: 'tableId',
+          foreignField: '_id',
+          as: 'table',
+        },
+      },
+      {
+        //$unwind: '$table',
+        $unwind: {
+          path: "$table",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        }
+      },
+      {
+        $lookup: {
+          from: 'waiters',
+          localField: 'waiterId',
+          foreignField: '_id',
+          as: 'waiter',
+        },
+      },
+      {
+        $unwind: '$waiter',
+      },
+      
+
+    ]);
+    res.json(holdingorder);
+    // Use Mongoose to find orders where paymentstatus is "notpaid"
+   // const notPaidOrders = await Pos.find({ paymentstatus: 'notpaid' });
+
+   // res.json(notPaidOrders);
+  } catch (error) {
+    console.error('Error fetching "notpaid" orders:', error);
+  
+  }
+});
+
+
+const todayOrder =asyncHandler(async(req,res) =>
+{
+  try {
+
+    const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+    const todayorder = await Pos.aggregate([
+      {
+        $match: {
+          paymentstatus: "paid",
+          date: {
+            $gte: today, // Greater than or equal to the beginning of the day
+            $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000) // Less than the beginning of the next day
+          }
+        }
+      },
+
+      {
+        $lookup: {
+          from: 'tables',
+          localField: 'tableId',
+          foreignField: '_id',
+          as: 'table',
+        },
+      },
+      {
+        //$unwind: '$table',
+        $unwind: {
+          path: "$table",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        }
+      },
+      {
+        $lookup: {
+          from: 'waiters',
+          localField: 'waiterId',
+          foreignField: '_id',
+          as: 'waiter',
+        },
+      },
+      {
+        $unwind: '$waiter',
+      },
+      
+
+    ]);
+    res.json(todayorder);
+    // Use Mongoose to find orders where paymentstatus is "notpaid"
+   // const notPaidOrders = await Pos.find({ paymentstatus: 'notpaid' });
+
+   // res.json(notPaidOrders);
+  } catch (error) {
+    console.error('Error fetching "notpaid" orders:', error);
+  
+  }
+
+})
+
+
+module.exports = 
+{getposCategory,
+  getPosWaiter,
+  getCustomer,
+  getTable,
+  getposFooditems,
+  insertPos,
+  getAllPos,
+  runningOrder,
+  completePaymeny,
+  updatePayment,
+  getKot,
+  insertPoshold,
+  getHold,
+  todayOrder
+};

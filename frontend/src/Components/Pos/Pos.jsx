@@ -10,6 +10,8 @@ import PosTable from "./posTable";
 import PosRunningOrder from "./posRunningorder";
 import Swal from 'sweetalert2';
 import PosNewOrder from "./posNeworder";
+import PosHoldingOrder from "./posHoldingorder";
+import PosTodayOrder from "./posTodayorder";
 
 
 const Pos =() =>{
@@ -66,18 +68,18 @@ const Pos =() =>{
                             </div>
 
                             <div className="tab-pane " id="runningorder" role="tabpanel" aria-labelledby="duck-tab">
-                            <button onClick={showSweetAlert}>Show SweetAlert2</button>
+                            <PosRunningOrder />
 
                             </div>
 
                             <div className="tab-pane " id="holdingorder" role="tabpanel" aria-labelledby="duck-tab">
-                            <h1>holdingorder Order</h1>
+                                <PosHoldingOrder />
 
                             </div>
 
                             
                             <div className="tab-pane " id="todayorder" role="tabpanel" aria-labelledby="duck-tab">
-                            <h1>todayorder Order</h1>
+                           <PosTodayOrder />
 
                             </div>
 
