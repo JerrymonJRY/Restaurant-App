@@ -1,8 +1,10 @@
 import React from "react";
-import { useState,useEffect } from "react";
+import { useState,useEffect,useRef,forwardRef  } from "react";
 import axios from "axios";
 import { redirect, useNavigate,Link } from "react-router-dom";
 import Swal from 'sweetalert2';
+import ReactToPrint   from "react-to-print";
+import ModalContent from "./modalContent";
 
 
 const PosHoldingOrder =() =>
@@ -11,6 +13,7 @@ const PosHoldingOrder =() =>
     const [posHoldingorder, setPosHoldingorder] = useState([]);
     const [kotdata,setkotData] =useState(null);
     const [showkotModal,setShowKotModal] =useState(false);
+    const componentRef = useRef();
     useEffect(() => {
         fetch('http://localhost:5000/api/pos/gethold')
           .then((response) => response.json())
@@ -41,7 +44,8 @@ const PosHoldingOrder =() =>
         {
                 posHoldingorder.map((order) => (
             <div className="col-md-3">
-                <div className="card">
+                  <div className="menu-boxs">
+                <div className="menu-div">
                   <h5 className="text-center">OrderID:<span>{order.ordernumber}</span></h5>
                
                   <h6 className="text-center">Table:{order.table  ?order.table.tablename :'No Table'}</h6>
@@ -58,6 +62,7 @@ const PosHoldingOrder =() =>
    
          </div>
     </div>
+                </div>
                 </div>
             </div>
 
@@ -80,58 +85,20 @@ const PosHoldingOrder =() =>
             </div>
             <div className="modal-body">
               {/* Display the data here */}
-              
-              { kotdata ? (
-kotdata.map((order) => (
-               <div key={order.id}>
-               <h5>Order Number: {order.ordernumber}</h5>
-               <h6>Options: {order.options}</h6>
-               <h6>Customer Name:{order.customerDetails ? order.customerDetails.customername : 'N/A'}</h6>
-      <h6>Table:{order.tableDetails ? order.tableDetails.tablename : 'N/A'}</h6>
-      <h6>Waiter {order.waiterDetails ? order.waiterDetails.waitername : 'N/A'}</h6>
-                <table className="table   table-bordered">
-                <thead>
-                <tr>
-                    <th>Si No</th>
-                    <th>Food Name</th>
-                    <th>Quanity</th>
-                    <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                 
-                  {order.cart.map((cartItem,key) => (
-                <tr key={cartItem.foodmenuId}>
-                  <td>{key + 1}</td>
-                  <td>{cartItem.menuItemDetails.foodmenuname}</td>
-                 
-                  <td>{cartItem.salesprice}</td>
-                  <td>{cartItem.quantity}</td>
-                  {/* Render other cart item details here */}
-                </tr>
-              ))}
-                
-                </tbody>
-                </table>
-                <h6 className="text-right">Total :{order.total}</h6>
-                <h6 className="text-right">Vat Amount :{order.vatAmount}</h6>
-                <h6 className="text-right">Grand Total :{order.grandTotal}</h6>
+            
+              <ModalContent kotdata={kotdata} ref={componentRef} />
+      
+            </div>
 
-           
-
-                <div className="modal-footer">
-                <button type="button" className="btn btn-outline-primary" >Print</button> 
+            <div class="modal-footer">
+            <ReactToPrint
+  trigger={() => (
+    <button className="btn btn-outline-primary">Print</button>
+  )}
+  content={() => componentRef.current}
+/>
               <button type="button" className="btn btn-outline-secondary" onClick={() => setShowKotModal(false)}>Close</button>
-            </div>
-   
-             </div>
-           
-              ))
-              ):(
-                <p>No data</p>
-              )
-            }
-            </div>
+      </div>
          
           </div>
         </div>

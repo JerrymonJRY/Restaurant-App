@@ -1,8 +1,9 @@
 import React from "react";
-import { useState,useEffect } from "react";
+import { useState,useEffect,useRef } from "react";
 import axios from "axios";
 import { redirect, useNavigate,Link } from "react-router-dom";
 import Swal from 'sweetalert2';
+import ReactToPrint   from "react-to-print";
 const PosRunningOrder = ()=>{
 
 
@@ -19,6 +20,15 @@ const PosRunningOrder = ()=>{
     //  alert({svat});
      }
 
+
+      const componentRef = useRef();
+    
+      const handlePrint = () => {
+        if (componentRef.current) {
+          componentRef.current.handlePrint();
+        }
+      };
+    
     useEffect(() => {
       fetch('http://localhost:5000/api/pos/getrunningorder')
         .then((response) => response.json())
@@ -42,6 +52,7 @@ const PosRunningOrder = ()=>{
 
     const closeModal = () => {
         setShowModal(false);
+        
       };
 
 
@@ -110,7 +121,8 @@ const handlekot =(id) =>
         {
                 posRunningorder.map((order) => (
             <div className="col-md-3">
-                <div className="card">
+                <div className="menu-boxs">
+                <div className="menu-div">
                   <h5 className="text-center">OrderID:<span>{order.ordernumber}</span></h5>
                
                   <h6 className="text-center">Table:{order.table  ?order.table.tablename :'No Table'}</h6>
@@ -119,7 +131,7 @@ const handlekot =(id) =>
 
                   <div class="row">
         
-         <div className="d-inline mx-auto">
+         <div className="d-inline mx-auto ">
 
              <a class="btn btn-outline-primary" onClick={(e) => handleComplete(order._id)} href="#">Payment</a>
              <a class="btn btn-outline-primary" onClick={(e) => handlekot(order._id)} href="#">KOT</a>
@@ -127,6 +139,7 @@ const handlekot =(id) =>
    
          </div>
     </div>
+                </div>
                 </div>
             </div>
 
@@ -221,6 +234,10 @@ data.map((order) => (
 
     {/* Setkot Table */}
     <div>
+    {/* <useReactToPrint
+        trigger={() => <button onClick={handlePrint}>Print</button>}
+        content={() => componentRef.current}
+      /> */}
  <div className={`modal ${showkotModal ? 'show' : ''}`} tabIndex="-1" role="dialog" style={{ display: showkotModal ? 'block' : 'none' }}>
         <div className="modal-dialog" role="document">
           <div className="modal-content">
@@ -272,7 +289,7 @@ kotdata.map((order) => (
            
 
                 <div className="modal-footer">
-                <button type="button" className="btn btn-outline-primary" >Print</button> 
+                <button type="button" onClick={handlePrint}  className="btn btn-outline-primary" >Print</button> 
               <button type="button" className="btn btn-outline-secondary" onClick={() => setShowKotModal(false)}>Close</button>
             </div>
    
@@ -289,6 +306,8 @@ kotdata.map((order) => (
         </div>
       </div>
       <div className={`modal-backdrop ${showkotModal ? 'show' : ''}`} style={{ display: showkotModal ? 'block' : 'none' }}></div>
+      
+      
     </div>
         </>
     );

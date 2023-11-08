@@ -109,6 +109,21 @@ const Sidebar =() =>{
             </ul>
           </div>
         </li>
+
+        <li className="nav-item">
+            <a className="nav-link" data-bs-toggle="collapse" href="#general-inventory" aria-expanded="false" aria-controls="general-inventory">
+              <span className="menu-title">Inventory</span>
+              <i className="menu-arrow"></i>
+              <i className="mdi mdi-medical-bag menu-icon"></i>
+            </a>
+            <div className="collapse" id="general-inventory">
+              <ul className="nav flex-column sub-menu">
+              <li className="nav-item"> <a className="nav-link" href="">Supplier </a></li>
+              {/* <li className="nav-item"> <Link className="nav-link" to="/viewWaiter"> Waiter</Link> </li> */}
+              
+              </ul>
+            </div>
+          </li>
    
         {/* <li className="nav-item">
           <a className="nav-link" href="pages/forms/basic_elements.html">

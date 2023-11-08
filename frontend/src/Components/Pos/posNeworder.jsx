@@ -331,6 +331,10 @@ console.info({customers})
         cart[i]._id
        );
        posData.append(
+        `cart[${i}].foodmenuname`,
+       cart[i].foodmenuname
+      );
+       posData.append(
          `cart[${i}].salesprice`,
          cart[i].salesprice
        );
@@ -366,11 +370,7 @@ console.info({customers})
    
         axios
        .post('http://localhost:5000/api/pos/createpos', posData, config)
-        // .then(res => {
-        //    console.log(res);
-        //    navigate('/posorder');
-        //  })
-        //  .catch(err => console.log(err));
+      
         .then(res => {
           Swal.fire({
             title: 'Success!',
@@ -382,7 +382,7 @@ console.info({customers})
           }).then((result) => {
             if (result.isConfirmed) {
               // Open your print modal here
-              console.log(res);
+              console.log(posData);
               openPrintModal(res.data);
             } else {
               navigate('/posorder');
@@ -393,35 +393,98 @@ console.info({customers})
     }
   };
 
-  function openPrintModal(orderData) {
-    $('#print-modal').modal('show');
+  // function openPrintModal(orderData) {
+  //   $('#print-modal').modal('show');
 
     
-    const modalBody = document.getElementById('modal-body');
+  //   const modalBody = document.getElementById('modal-body');
   
    
-    const table = document.createElement('table');
-    table.classList.add('table'); 
+  //   const table = document.createElement('table');
+  //   table.classList.add('table'); 
+
   
  
-    const tableBody = document.createElement('tbody');
-  
+  //   const tableBody = document.createElement('tbody');
+
     
-    for (const key in orderData) {
-      if (Object.hasOwnProperty.call(orderData, key)) {
-        const row = tableBody.insertRow();
-        const cell1 = row.insertCell(0);
-        const cell2 = row.insertCell(1);
-        cell1.textContent = key;
-        cell2.textContent = orderData[key];
-      }
-    }
+   
+    
+  //   for (const key in orderData) {
+  //     if (Object.hasOwnProperty.call(orderData, key)) {
+  //       const row = tableBody.insertRow();
+  //       const cell1 = row.insertCell(0);
+  //       const cell2 = row.insertCell(1);
+  //       cell1.textContent = key;
+  //       cell2.textContent = orderData[key];
+  //     }
+  //   }
   
    
-    table.appendChild(tableBody);
+  //   table.appendChild(tableBody);
   
   
-    modalBody.appendChild(table);
+  //   modalBody.appendChild(table);
+  // }
+
+  function openPrintModal(data) {
+    // Create a modal dialog or use a library like Swal
+    Swal.fire({
+      title: 'Order Details',
+      html: getFormattedOrderDetails(data), // Call a function to format the data
+      icon: 'success',
+      confirmButtonText: 'OK',
+    });
+  }
+
+  function getFormattedOrderDetails(data) {
+    // Create an HTML structure to display the order details
+    let formattedDetails = '<div>';
+    formattedDetails += `<p><strong>Order Number:</strong> ${data.ordernumber}</p>`;
+    formattedDetails += `<p><strong>Customer:</strong> ${data.customers}</p>`;
+    formattedDetails += `<p><strong>Options:</strong> ${data.options}</p>`;
+    
+    
+    // Loop through cart items
+    formattedDetails += '<p><strong>Cart:</strong></p>';
+    formattedDetails += `<table className="table table-bordered">`;
+    formattedDetails += `<thead>`;
+    formattedDetails += `<tr>`;
+    formattedDetails += `<th>Item</th>`;
+    formattedDetails += `<th>Food Menu Name</th>`;
+    formattedDetails += `<th>Sales Price</th>`;
+    formattedDetails += `<th>Quantity</th>`;
+    formattedDetails += `</tr>`;
+    formattedDetails += `<tbody>`;
+
+    data.cart.forEach((item, index) => {
+      formattedDetails += `<tr>`;
+      formattedDetails += `<td>${index + 1}</td>`;
+    
+      formattedDetails += `<td>${item.foodmenuname}</td>`;
+      formattedDetails += `<td>${item.salesprice}</td>`;
+      formattedDetails += `<td>${item.quantity}</td>`;
+      formattedDetails += `</tr>`;
+    });
+    formattedDetails += `</tbody>`;
+    formattedDetails += `</table>`;
+    
+    formattedDetails += `<p><strong>VAT Amount:</strong> ${data.vatAmount}</p>`;
+    formattedDetails += `<p><strong>Total Amount:</strong> ${data.total}</p>`;
+    formattedDetails += `<p><strong>Grand Total:</strong> ${data.grandTotal}</p>`;
+
+    
+    if (data.tableId) {
+      formattedDetails += `<p><strong>Table ID:</strong> ${data.tableId}</p>`;
+    }
+    
+    if (data.waiterId) {
+      formattedDetails += `<p><strong>Waiter ID:</strong> ${data.waiterId}</p>`;
+    }
+    
+    formattedDetails += '</div>';
+    
+    return formattedDetails;
   }
 
 
@@ -693,8 +756,11 @@ console.info({customers})
                 {
                 waiter.map((wait, index) => (
                     <div className="col-sm-3 col-md-3">
-                      <div className="menu-box" onClick={() => handleWaiter(wait)}>
-
+                      {/* <div className="menu-box" onClick={() => handleWaiter(wait)}> */}
+                      <div
+            className={`menu-box ${wait === selectWaiter ? 'selectable' : 'read-only'}`}
+            onClick={() => handleWaiter(wait)}
+          >
                         <h6>{wait.waitername}</h6>
                       </div>
                     </div>

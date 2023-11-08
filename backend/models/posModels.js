@@ -17,6 +17,7 @@ ordernumber:{type:String},
   cart:[{
     foodmenuId: { type: mongoose.Schema.ObjectId,
       ref: "FoodMenu",},
+    foodmenuname:String,
     salesprice: String,
     quantity: String,
 
