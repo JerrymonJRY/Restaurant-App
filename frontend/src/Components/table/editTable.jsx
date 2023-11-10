@@ -5,6 +5,7 @@ import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate,useParams } from "react-router-dom";
+import apiConfig from '../layouts/base_url';
 const EditTable =() =>{
 
     const {id} =useParams()
@@ -18,7 +19,7 @@ const EditTable =() =>{
 
     useEffect( ()=>{
 
-        axios.get('http://localhost:5000/api/table/gettable/'+id)
+        axios.get(`${apiConfig.baseURL}/api/table/gettable/${id}`)
         .then(res => { console.log(res)
             seTableName(res.data.tablename)
             setPosition(res.data.Position)
@@ -34,7 +35,7 @@ const EditTable =() =>{
     const handleSubmit =(event) =>{
 
         event.preventDefault();
-        axios.put('http://localhost:5000/api/table/updateTable/'+id,{tablename,Position,seatcapacity,description})
+        axios.put(`${apiConfig.baseURL}/api/table/updateTable/${id}`,{tablename,Position,seatcapacity,description})
         .then(res =>{
 
             console.log(res);

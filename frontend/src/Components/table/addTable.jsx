@@ -5,6 +5,7 @@ import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate } from "react-router-dom";
+import apiConfig from '../layouts/base_url';
 const AddTable =() =>{
     const [values,setValues] = useState({
 
@@ -22,7 +23,7 @@ const AddTable =() =>{
         event.preventDefault();
         const validationErrors = validateForm(values);
         if (Object.keys(validationErrors).length === 0) {
-        axios.post('http://localhost:5000/api/table/createtable',values)
+        axios.post(`${apiConfig.baseURL}/api/table/createtable`,values)
         .then(res =>{
 
             console.log(res);

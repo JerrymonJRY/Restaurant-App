@@ -7,14 +7,14 @@ import Select from 'react-select';
 
 import axios from "axios";
 import { redirect, useNavigate } from "react-router-dom";
-
+import apiConfig from '../layouts/base_url';
 
 const AddFoodMenu =() =>{
 
     
   useEffect(() => {
     // Fetch data from your API here
-    axios.get('http://localhost:5000/api/foodmenu/ingredients')
+    axios.get(`${apiConfig.baseURL}/api/foodmenu/ingredients`)
       .then(response => {
         // Assuming your API response is an array of objects with 'value' and 'label' properties
         const data = response.data.map(item => ({
@@ -34,7 +34,7 @@ const AddFoodMenu =() =>{
 
   useEffect(() => {
    
-    axios.get('http://localhost:5000/api/foodmenu/foodcategory')
+    axios.get(`${apiConfig.baseURL}/api/foodmenu/foodcategory`)
     .then((response) => {
       setFoodcategory(response.data);
     })
@@ -50,7 +50,7 @@ const handleCategoryChange = (e) => {
 const [vat,selectVat] = useState([]);
   
 useEffect(() =>{
-  axios.get('http://localhost:5000/api/foodmenu/vat')
+  axios.get(`${apiConfig.baseURL}/api/foodmenu/vat`)
   .then((response) => {
     selectVat(response.data);
   })
@@ -157,28 +157,9 @@ formData.append('bar', bar);
 
     
 
-    // axios.post('http://localhost:5000/api/foodmenu/creatfoodmenu', {
-    //   fetch('http://localhost:5000/api/foodmenu/creatfoodmenu', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    // // headers:{ 'Content-Type': ['multipart/form-data', 'application/json']},
-    //   body: JSON.stringify({foodmenuname,foodcategoryId,vatId,salesprice,description,vegitem,beverage,bar,photo,foodingredientId: selectedValues.map(units => units.value), })
-    // })
-    //   .then(res => {
-    //     console.log(res);
-    //     navigate('/viewfoodmenu');
-    //   })
-    //   .catch(err => console.log(err));
-   
-    // const res =  axios.post("http://localhost:5000/api/foodmenu/creatfoodmenu", formData, config);
 
-    // if (res.data.status === 401 || !res.data) {
-    //   console.log("errror")
-    // } else {
-    //   navigate('/viewfoodmenu');
-    // }
     axios
-    .post('http://localhost:5000/api/foodmenu/creatfoodmenu', formData, config)
+    .post(`${apiConfig.baseURL}/api/foodmenu/creatfoodmenu`, formData, config)
      .then(res => {
         console.log(res);
         navigate('/viewfoodmenu');

@@ -5,7 +5,7 @@ import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate,useParams } from "react-router-dom";
-
+import apiConfig from '../layouts/base_url';
 
 const EditCategory =() =>{
 
@@ -19,7 +19,7 @@ const EditCategory =() =>{
 
     useEffect( ()=>{
 
-        axios.get('http://localhost:5000/api/category/getcategory/'+id)
+        axios.get(`${apiConfig.baseURL}/api/category/getcategory/${id}`)
         .then(res => { console.log(res)
              setCategoryName(res.data.categoryname)
              setDescription(res.data.description)
@@ -33,7 +33,7 @@ const EditCategory =() =>{
     const handleSubmit =(event) =>{
 
         event.preventDefault();
-        axios.put('http://localhost:5000/api/category/updatecategory/'+id,{categoryname,description})
+        axios.put(`${apiConfig.baseURL}/api/category/updatecategory/${id}`,{categoryname,description})
         .then(res =>{
 
             console.log(res);

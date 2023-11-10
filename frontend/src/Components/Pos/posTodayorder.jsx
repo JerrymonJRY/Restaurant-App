@@ -3,6 +3,7 @@ import { useState,useEffect } from "react";
 import axios from "axios";
 import { redirect, useNavigate,Link } from "react-router-dom";
 import Swal from 'sweetalert2';
+import apiConfig from '../layouts/base_url';
 
 const PosTodayOrder =() =>{
 
@@ -11,7 +12,7 @@ const PosTodayOrder =() =>{
     const totalGrandTotal = posTodayorder.reduce((total, order) => total + order.grandTotal, 0);
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/pos/gettodayOrder')
+        fetch(`${apiConfig.baseURL}/api/pos/gettodayOrder`)
           .then((response) => response.json())
           .then((data) => setPosTodayorder(data))
           .catch((error) => console.error(error));

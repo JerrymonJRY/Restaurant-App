@@ -5,7 +5,8 @@ import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate } from "react-router-dom";
-
+import apiConfig from '../layouts/base_url';
+import Swal from 'sweetalert2';
 const AddWaiter =() =>{
 
     const [values,setValues] = useState({
@@ -20,24 +21,36 @@ const AddWaiter =() =>{
     })
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
-    const handleSubmit =(event) =>{
 
-        event.preventDefault();
-        const validationErrors = validateForm(values);
-        if (Object.keys(validationErrors).length === 0) {
-        axios.post('http://localhost:5000/api/waiter/createwaiter',values)
-        .then(res =>{
-
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      const validationErrors = validateForm(values);
+    
+      if (Object.keys(validationErrors).length === 0) {
+        axios.post(`${apiConfig.baseURL}/api/waiter/createwaiter`, values)
+          .then((res) => {
             console.log(res);
-            navigate('/viewWaiter');
-        })
-        .catch(err =>console.log(err));
-      }
-      else {
+            Swal.fire({
+              icon: 'success',
+              title: 'Waiter Created!',
+              text: 'Your waiter has been created successfully.',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+              },
+            }).then(() => {
+              navigate('/viewWaiter');
+            });
+          })
+          .catch((err) => console.log(err));
+      } else {
         // Set validation errors
         setErrors(validationErrors);
       }
-    }
+    };
 
 
     const validateForm = (data) => {

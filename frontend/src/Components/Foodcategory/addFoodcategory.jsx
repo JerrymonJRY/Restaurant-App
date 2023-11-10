@@ -5,7 +5,7 @@ import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate,Link } from "react-router-dom";
-
+import apiConfig from '../layouts/base_url';
 const AddFoodCategory =() =>{
 
     const [values,setValues] = useState({
@@ -22,7 +22,7 @@ const AddFoodCategory =() =>{
         event.preventDefault();
         const validationErrors = validateForm(values);
         if (Object.keys(validationErrors).length === 0) {
-        axios.post('http://localhost:5000/api/foodcategory/createfoodcategory',values)
+        axios.post(`${apiConfig.baseURL}/api/foodcategory/createfoodcategory`,values)
         .then(res =>{
 
             console.log(res);

@@ -3,7 +3,7 @@ import { useState,useEffect } from "react";
 import Header from "../../layouts/Header";
 import Sidebar from "../../layouts/Sidebar";
 import Footer from "../../layouts/Footer";
-
+import apiConfig from '../../layouts/base_url';
 import axios from "axios";
 import { redirect, useNavigate,useParams } from "react-router-dom";
 
@@ -19,7 +19,7 @@ const EditIngredientUnit =() =>{
 
     useEffect( ()=>{
 
-        axios.get('http://localhost:5000/api/ingunit/getingunit/'+id)
+        axios.get(`${apiConfig.baseURL}/api/ingunit/getingunit/${id}`)
         .then(res => { console.log(res)
             setUnitName(res.data.unitname)
              setDescription(res.data.description)
@@ -33,7 +33,7 @@ const EditIngredientUnit =() =>{
     const handleSubmit =(event) =>{
 
         event.preventDefault();
-        axios.put('http://localhost:5000/api/ingunit/updateingunit/'+id,{unitname,description})
+        axios.put(`${apiConfig.baseURL}/api/ingunit/updateingunit/${id}`,{unitname,description})
         .then(res =>{
 
             console.log(res);

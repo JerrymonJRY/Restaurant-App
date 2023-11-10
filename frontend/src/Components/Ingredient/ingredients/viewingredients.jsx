@@ -6,17 +6,27 @@ import Footer from "../../layouts/Footer";
 
 import axios from "axios";
 import { redirect, useNavigate,Link } from "react-router-dom";
-
+import apiConfig from '../../layouts/base_url';
 const ViewIngredients =() =>{
    
   const [ingredients, setIngredients] = useState([]);
 
-  useEffect(() => {
-    fetch('http://localhost:5000/api/ingredient/getalling')
-      .then((response) => response.json())
-      .then((data) => setIngredients(data))
-      .catch((error) => console.error(error));
-  }, []);
+
+
+  
+  useEffect( ()=>{
+
+    axios.get(`${apiConfig.baseURL}/api/ingredient/getalling`)
+    .then((res) => {
+      setIngredients(res.data);
+
+      // Initialize DataTables after data is loaded
+      $(document).ready(function () {
+        $('#example_table').DataTable();
+      });
+    })
+    .catch((err) => console.log(err));
+}, []);
 
   const handleDelete =(id) =>
   {
@@ -40,7 +50,7 @@ const ViewIngredients =() =>{
                 <div className="d-flex justify-content-end">
                     <Link to="/addingredients" className="btn btn-success">Add +</Link>
                 </div>
-                    <table className="table table-hover">
+                <table className="table table-hover"  id="example_table" style={{ width: "100%" }}>
                       <thead>
                         <tr>
                           <th>Name</th>

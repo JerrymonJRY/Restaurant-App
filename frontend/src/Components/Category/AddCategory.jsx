@@ -5,6 +5,7 @@ import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate } from "react-router-dom";
+import apiConfig from '../layouts/base_url';
 
 
 const AddCategory =() =>{
@@ -26,7 +27,7 @@ const AddCategory =() =>{
 
         event.preventDefault();
         if (Object.keys(validationErrors).length === 0) {
-        axios.post('http://localhost:5000/api/category/createcategory',values)
+        axios.post(`${apiConfig.baseURL}/api/category/createcategory`,values)
         .then(res =>{
 
             console.log(res);

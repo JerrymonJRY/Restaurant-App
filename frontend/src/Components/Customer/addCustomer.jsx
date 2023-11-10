@@ -5,6 +5,7 @@ import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate } from "react-router-dom";
+import apiConfig from '../layouts/base_url';
 
 const AddCustomer =() =>{
 
@@ -24,7 +25,7 @@ const AddCustomer =() =>{
         event.preventDefault();
         const validationErrors = validateForm(values);
         if (Object.keys(validationErrors).length === 0) {
-        axios.post('http://localhost:5000/api/customer/createCustomer',values)
+        axios.post(`${apiConfig.baseURL}/api/customer/createCustomer`,values)
         .then(res =>{
 
             console.log(res);

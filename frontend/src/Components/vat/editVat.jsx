@@ -5,7 +5,7 @@ import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate,useParams } from "react-router-dom";
-
+import apiConfig from '../layouts/base_url';
 const EditVat =() =>{
 
     const {id} =useParams()
@@ -17,7 +17,7 @@ const EditVat =() =>{
 
     useEffect( ()=>{
 
-        axios.get('http://localhost:5000/api/vat/getvat/'+id)
+        axios.get(`${apiConfig.baseURL}/api/vat/getvat/${id}`)
         .then(res => { console.log(res)
             setVatName(res.data.vatname)
             setPercentage(res.data.percentage)
@@ -31,7 +31,7 @@ const EditVat =() =>{
     const handleSubmit =(event) =>{
 
         event.preventDefault();
-        axios.put('http://localhost:5000/api/vat/updateVat/'+id,{vatname,percentage})
+        axios.put(`${apiConfig.baseURL}/api/vat/updateVat/${id}`,{vatname,percentage})
         .then(res =>{
 
             console.log(res);

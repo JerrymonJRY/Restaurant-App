@@ -3,7 +3,7 @@ import { useState } from "react";
 import Header from "../../layouts/Header";
 import Sidebar from "../../layouts/Sidebar";
 import Footer from "../../layouts/Footer";
-
+import apiConfig from '../../layouts/base_url';
 import axios from "axios";
 import { redirect, useNavigate } from "react-router-dom";
 
@@ -24,7 +24,7 @@ const AddIngredientUnit =() =>{
         event.preventDefault();
         const validationErrors = validateForm(values);
         if (Object.keys(validationErrors).length === 0) {
-        axios.post('http://localhost:5000/api/ingunit/createingunit',values)
+        axios.post(`${apiConfig.baseURL}/api/ingunit/createingunit`,values)
         .then(res =>{
 
             console.log(res);

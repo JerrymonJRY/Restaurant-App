@@ -5,7 +5,7 @@ import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate,useParams } from "react-router-dom";
-
+import apiConfig from '../layouts/base_url';
 const EditCustomer =() =>{
 
     const {id} =useParams()
@@ -19,7 +19,7 @@ const EditCustomer =() =>{
 
     useEffect( ()=>{
 
-        axios.get('http://localhost:5000/api/customer/getCustomer/'+id)
+        axios.get(`${apiConfig.baseURL}/api/customer/getCustomer/${id}`)
         .then(res => { console.log(res)
             setCustomername(res.data.customername)
             setCustomeremail(res.data.customeremail)
@@ -35,7 +35,7 @@ const EditCustomer =() =>{
     const handleSubmit =(event) =>{
 
         event.preventDefault();
-        axios.put('http://localhost:5000/api/customer/updateCustomer/'+id,{customername,customeremail,customermobile,customeraddress})
+        axios.put(`${apiConfig.baseURL}/api/customer/updateCustomer/${id}`,{customername,customeremail,customermobile,customeraddress})
         .then(res =>{
 
             console.log(res);

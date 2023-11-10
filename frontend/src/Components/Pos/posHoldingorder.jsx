@@ -5,6 +5,7 @@ import { redirect, useNavigate,Link } from "react-router-dom";
 import Swal from 'sweetalert2';
 import ReactToPrint   from "react-to-print";
 import ModalContent from "./modalContent";
+import apiConfig from '../layouts/base_url';
 
 
 const PosHoldingOrder =() =>
@@ -13,9 +14,10 @@ const PosHoldingOrder =() =>
     const [posHoldingorder, setPosHoldingorder] = useState([]);
     const [kotdata,setkotData] =useState(null);
     const [showkotModal,setShowKotModal] =useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
     const componentRef = useRef();
     useEffect(() => {
-        fetch('http://localhost:5000/api/pos/gethold')
+        fetch(`${apiConfig.baseURL}/api/pos/gethold`)
           .then((response) => response.json())
           .then((data) => setPosHoldingorder(data))
           .catch((error) => console.error(error));
@@ -25,8 +27,8 @@ const PosHoldingOrder =() =>
       const handlekot =(id) =>
 {
 
-  const url = "http://localhost:5000/api/pos/getKot/"+id;
-  axios.get(url)
+
+  axios.get(`${apiConfig.baseURL}/api/pos/getKot/${id}`)
   .then((response) => {
     setkotData(response.data);
     console.log(response.data);
@@ -37,12 +39,42 @@ const PosHoldingOrder =() =>
   });
 
 }
+
+const filteredOrders = posHoldingorder.filter((order) => {
+  const searchTermLower = searchTerm.toLowerCase();
+  const orderNumberIncludes = order.ordernumber.toLowerCase().includes(searchTermLower);
+  const tableNameIncludes = order.table && order.table.tablename.toLowerCase().includes(searchTermLower);
+  const waiterNameIncludes = order.waiter.waitername.toLowerCase().includes(searchTermLower);
+
+  return orderNumberIncludes || (tableNameIncludes && waiterNameIncludes);
+});
+
+const handleSearch = (e) => {
+  setSearchTerm(e.target.value);
+};
+
   
     return(
         <>
+      
+        <div className="container">
                <div className="row">
+
+                <div className="col-md-12">
+                  <div className="form-group">
+                  <input
+                   type="text"
+                   placeholder="Search by OrderID"
+                   value={searchTerm}
+                     onChange={handleSearch}
+                    className="form-control"
+        />
+                  </div>
+                </div>
+
+
         {
-                posHoldingorder.map((order) => (
+                filteredOrders.map((order) => (
             <div className="col-md-3">
                   <div className="menu-boxs">
                 <div className="menu-div">
@@ -104,6 +136,7 @@ const PosHoldingOrder =() =>
         </div>
       </div>
       <div className={`modal-backdrop ${showkotModal ? 'show' : ''}`} style={{ display: showkotModal ? 'block' : 'none' }}></div>
+    </div>
     </div>
         </>
     );

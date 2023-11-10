@@ -5,7 +5,7 @@ import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate,useParams } from "react-router-dom";
-
+import apiConfig from '../layouts/base_url';
 const EditWaiter =() =>{
 
     const {id} =useParams()
@@ -19,7 +19,7 @@ const EditWaiter =() =>{
 
     useEffect( ()=>{
 
-        axios.get('http://localhost:5000/api/waiter/getwaiter/'+id)
+        axios.get(`${apiConfig.baseURL}/api/waiter/getwaiter/${id}`)
         .then(res => { console.log(res)
             setWaiterName(res.data.waitername)
             setDesignation(res.data.designation)
@@ -37,7 +37,7 @@ const EditWaiter =() =>{
     const handleSubmit =(event) =>{
 
         event.preventDefault();
-        axios.put('http://localhost:5000/api/waiter/updatewaiter/'+id,{waitername,designation,mobile,description})
+        axios.put(`${apiConfig.baseURL}/api/waiter/updatewaiter/${id}`,{waitername,designation,mobile,description})
         .then(res =>{
 
             console.log(res);

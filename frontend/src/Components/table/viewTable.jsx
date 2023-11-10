@@ -5,24 +5,33 @@ import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate,Link } from "react-router-dom";
+import apiConfig from '../layouts/base_url';
 const ViewTable =() =>{
 
   const [data , setData] =useState([]);
   const navigate = useNavigate();
   useEffect( ()=>{
 
-      axios.get('http://localhost:5000/api/table/alltable')
-      .then(res =>setData(res.data))
-      .catch(err =>console.log(err));
+      axios.get(`${apiConfig.baseURL}/api/table/alltable`)
+      .then((res) => {
+        setData(res.data);
 
-  },[])
+        // Initialize DataTables after data is loaded
+        $(document).ready(function () {
+          $('#example_table').DataTable();
+        });
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  
 
   const handleDelete =(id) =>
   {
       const confirm =window.confirm('Are You Delete');
       if(confirm)
       {
-          axios.delete('http://localhost:5000/api/table/deleteTable/'+id)
+          axios.delete(`${apiConfig.baseURL}/api/table/deleteTable/${id}`)
           .then(res =>{
 
              
@@ -48,7 +57,7 @@ const ViewTable =() =>{
                     <Link to="/addTable" className="btn btn-success">Add +</Link>
                 </div>
                   
-                    <table className="table table-hover">
+                <table className="table table-hover"  id="example_table" style={{ width: "100%" }}>
                       <thead>
                         <tr>
                           <th>Table Name</th>

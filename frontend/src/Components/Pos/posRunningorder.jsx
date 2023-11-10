@@ -4,6 +4,7 @@ import axios from "axios";
 import { redirect, useNavigate,Link } from "react-router-dom";
 import Swal from 'sweetalert2';
 import ReactToPrint   from "react-to-print";
+import apiConfig from '../layouts/base_url';
 const PosRunningOrder = ()=>{
 
 
@@ -13,7 +14,7 @@ const PosRunningOrder = ()=>{
     const [showModal, setShowModal] = useState(false);
     const [showkotModal,setShowKotModal] =useState(false);
     const [payments,setPays] =useState();
-
+ const [searchTerm, setSearchTerm] = useState('');
     const handlePays = (event) => {
       setPays(event.target.value);
       
@@ -30,15 +31,23 @@ const PosRunningOrder = ()=>{
       };
     
     useEffect(() => {
-      fetch('http://localhost:5000/api/pos/getrunningorder')
+      fetch(`${apiConfig.baseURL}/api/pos/getrunningorder`)
         .then((response) => response.json())
         .then((data) => setPosRunningorder(data))
         .catch((error) => console.error(error));
     }, []);
 
+    const filteredOrders = posRunningorder.filter((order) => {
+      const searchTermLower = searchTerm.toLowerCase();
+      const orderNumberIncludes = order.ordernumber.toLowerCase().includes(searchTermLower);
+      const tableNameIncludes = order.table && order.table.tablename.toLowerCase().includes(searchTermLower);
+      const waiterNameIncludes = order.waiter.waitername.toLowerCase().includes(searchTermLower);
+    
+      return orderNumberIncludes || (tableNameIncludes && waiterNameIncludes);
+    });
     const handleComplete =(id) =>{
         console.log(id);
-        axios.get('http://localhost:5000/api/pos/getcomplete/'+id)
+        axios.get(`${apiConfig.baseURL}/api/pos/getcomplete/${id}`)
         .then((response) => {
             setData(response.data);
             console.log(response.data);
@@ -74,7 +83,7 @@ const handleMakePayment =(id) =>
       'Content-Type': 'application/json',
     }
   };
-  const url = "http://localhost:5000/api/pos/updatePayment/"+id;
+  const url = `${apiConfig.baseURL}/api/pos/updatePayment/${id}`;
 
   axios.put(url,formData, config)
   .then(res => {
@@ -101,7 +110,7 @@ const handleMakePayment =(id) =>
 const handlekot =(id) =>
 {
 
-  const url = "http://localhost:5000/api/pos/getKot/"+id;
+  const url = `${apiConfig.baseURL}/api/pos/getKot/${id}`;
   axios.get(url)
   .then((response) => {
     setkotData(response.data);
@@ -115,11 +124,33 @@ const handlekot =(id) =>
 }
 
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+
     return(
         <>
+        <div className="container">
+
+      
         <div className="row">
+
+       <div className="col-md-12">
+        <div className="form-group">
+        <input
+          type="text"
+          placeholder="Search by OrderID"
+          value={searchTerm}
+          onChange={handleSearch}
+          className="form-control"
+        />
+        </div>
+       </div>
+        
+     
         {
-                posRunningorder.map((order) => (
+                filteredOrders.map((order) => (
             <div className="col-md-3">
                 <div className="menu-boxs">
                 <div className="menu-div">
@@ -308,6 +339,7 @@ kotdata.map((order) => (
       <div className={`modal-backdrop ${showkotModal ? 'show' : ''}`} style={{ display: showkotModal ? 'block' : 'none' }}></div>
       
       
+    </div>
     </div>
         </>
     );

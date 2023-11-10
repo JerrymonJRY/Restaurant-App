@@ -1,6 +1,6 @@
 import React from "react";
 import { useState,useEffect } from "react";
-
+import apiConfig from '../../layouts/base_url';
 import axios from "axios";
 import { redirect, useNavigate,Link } from "react-router-dom";
 import Header from "../../layouts/Header";
@@ -11,20 +11,28 @@ import Footer from "../../layouts/Footer";
 const ViewIngredientUnit =() =>{
     const [data , setData] =useState([]);
     const navigate = useNavigate();
+
+
     useEffect( ()=>{
 
-        axios.get('http://localhost:5000/api/ingunit/allingunit')
-        .then(res =>setData(res.data))
-        .catch(err =>console.log(err));
-
-    },[])
+      axios.get(`${apiConfig.baseURL}/api/ingunit/allingunit`)
+      .then((res) => {
+        setData(res.data);
+  
+        // Initialize DataTables after data is loaded
+        $(document).ready(function () {
+          $('#example_table').DataTable();
+        });
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
     const handleDelete =(id) =>
     {
         const confirm =window.confirm('Are You Delete');
         if(confirm)
         {
-            axios.delete('http://localhost:5000/api/ingunit/deleteIngUnit/'+id)
+            axios.delete(`${apiConfig.baseURL}/api/ingunit/deleteIngUnit/${id}`)
             .then(res =>{
 
                
@@ -49,7 +57,7 @@ const ViewIngredientUnit =() =>{
                     <Link to="/addingredientunit" className="btn btn-success">Add +</Link>
                 </div>
                   
-                    <table className="table table-hover">
+                <table className="table table-hover"  id="example_table" style={{ width: "100%" }}>
                       <thead>
                         <tr>
                           <th>Ingredient Unit Name</th>

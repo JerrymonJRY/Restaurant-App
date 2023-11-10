@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import axios from "axios";
 import { redirect, useNavigate, Link } from "react-router-dom";
 import Swal from 'sweetalert2';
+import apiConfig from '../layouts/base_url';
 
 const PosNewOrder = () => {
 
@@ -37,12 +38,13 @@ const PosNewOrder = () => {
   const [customers, setCustomers] = useState([]);
   const [selectCustomer, setSelectCustomer] = useState();
   const [placeorder, setPlaceOrder] = useState({});
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [showTable, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
 const handleSearch = (e) => {
-  setSearchQuery(e.target.value);
+  setSearchTerm(e.target.value);
 };
 
 console.info({table})
@@ -122,7 +124,7 @@ console.info({customers})
   //Get The Waiter data
   useEffect(() => {
 
-    axios.get('http://localhost:5000/api/pos/posWaiter')
+    axios.get(`${apiConfig.baseURL}/api/pos/posWaiter`)
       .then((response) => {
         setWaiter(response.data);
       })
@@ -133,7 +135,7 @@ console.info({customers})
 
   useEffect(() => {
 
-    axios.get('http://localhost:5000/api/pos/posTable')
+    axios.get(`${apiConfig.baseURL}/api/pos/posTable`)
       .then((response) => {
         setTable(response.data);
       })
@@ -141,7 +143,7 @@ console.info({customers})
         console.error(error);
       });
 
-      axios.get('http://localhost:5000/api/pos/posCustomer')
+      axios.get(`${apiConfig.baseURL}/api/pos/posCustomer`)
       .then((response) => {
         setCustomers(response.data);
       })
@@ -152,7 +154,7 @@ console.info({customers})
 
   useEffect(() => {
 
-    axios.get('http://localhost:5000/api/pos/posfood')
+    axios.get(`${apiConfig.baseURL}/api/pos/posfood`)
       .then((response) => {
         setFoodcategory(response.data);
       })
@@ -293,7 +295,15 @@ console.info({customers})
   // }
   const handlePlaceorder = (event) => {
     event.preventDefault();
-    if (cart.length < 1) {
+    if(!selectWaiter)
+    {
+      Swal.fire({
+        icon: 'error',
+        title: 'Waiter is Empty',
+        text: 'Please add items to your cart before placing an order.',
+      });
+    }
+    else if (cart.length < 1) {
       Swal.fire({
         icon: 'error',
         title: 'Cart is empty',
@@ -369,7 +379,7 @@ console.info({customers})
        };
    
         axios
-       .post('http://localhost:5000/api/pos/createpos', posData, config)
+       .post(`${apiConfig.baseURL}/api/pos/createpos`, posData, config)
       
         .then(res => {
           Swal.fire({
@@ -563,7 +573,7 @@ console.info({customers})
        };
    
         axios
-       .post('http://localhost:5000/api/pos/createHold', posData, config)
+       .post(`${apiConfig.baseURL}/api/pos/createHold`, posData, config)
         // .then(res => {
         //    console.log(res);
         //    navigate('/posorder');
@@ -802,6 +812,15 @@ console.info({customers})
           </div>
           <div className="tab-pane " id="foodmenu" role="tabpanel" aria-labelledby="duck-tab">
             <div className="tbl-h">
+              <div className="form-group">
+              <input
+               type="text"
+                placeholder="Search foodmenu..."
+               value={searchTerm}
+              onChange={handleSearch}
+              className="form-control"
+              />
+              </div>
               <ul className="nav nav-pills flex-columns shdw-lft " id="myTab" role="tablist">
                 {distinctCategories.map((category, index) => (
                   <li className="nav-item">
@@ -820,18 +839,15 @@ console.info({customers})
               </ul>
             </div>
             <div className="tab-content p-3" id="myTabContents">
-            <input
-  type="text"
-  placeholder="Search foodmenu..."
-  value={searchQuery}
-  onChange={handleSearch}
-  className="form-control"
-/>
+
               {isLoading ? 'Loading' : <div className="row">
 
                 {foodCategory.length > 0 &&
                   foodCategory
-                    .filter(item => item.foodcategory.foodcategoryname === distinctCategories[activeTab])
+                    .filter(item => item.foodcategory.foodcategoryname === distinctCategories[activeTab]
+                      &&
+                      item.foodmenuname.toLowerCase().includes(searchTerm.toLowerCase())
+                      )
                     .map((menu, index) => (
                       <div className="col-sm-3 col-sm-3" key={index}>
                         <div className="menu-box" onClick={() => addProductToCart(menu)}>

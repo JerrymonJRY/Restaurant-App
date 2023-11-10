@@ -3,7 +3,7 @@ import { useState,useEffect } from "react";
 import Header from "../../layouts/Header";
 import Sidebar from "../../layouts/Sidebar";
 import Footer from "../../layouts/Footer";
-
+import apiConfig from '../../layouts/base_url';
 import axios from "axios";
 import { redirect, useNavigate } from "react-router-dom";
 
@@ -16,7 +16,7 @@ const AddIngredients =() =>{
 
   useEffect(() => {
     // Fetch categories from the server
-    axios.get('http://localhost:5000/api/ingredient/getallcategory')
+    axios.get(`${apiConfig.baseURL}/api/ingredient/getallcategory`)
       .then((response) => {
         setCategories(response.data);
       })

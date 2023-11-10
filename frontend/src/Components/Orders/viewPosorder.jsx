@@ -3,7 +3,7 @@ import { useState,useEffect } from "react";
 import Header from '../layouts/Header';
 import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
-
+import apiConfig from '../layouts/base_url';
 import axios from "axios";
 import { redirect, useNavigate,Link } from "react-router-dom";
 
@@ -12,11 +12,25 @@ const ViewPosOrder =() =>{
 
   const [posfood, setPosFood] = useState([]);
 
+  // useEffect(() => {
+  //   fetch('http://localhost:5000/api/pos/getPos')
+  //     .then((response) => response.json())
+  //     .then((data) => setPosFood(data))
+  //     .catch((error) => console.error(error));
+  // }, []);
+
   useEffect(() => {
-    fetch('http://localhost:5000/api/pos/getPos')
-      .then((response) => response.json())
-      .then((data) => setPosFood(data))
-      .catch((error) => console.error(error));
+    axios
+      .get(`${apiConfig.baseURL}/api/pos/getPos`)
+      .then((res) => {
+        setPosFood(res.data);
+
+        // Initialize DataTables after data is loaded
+        $(document).ready(function () {
+          $('#example_table').DataTable();
+        });
+      })
+      .catch((err) => console.log(err));
   }, []);
 
 
@@ -40,7 +54,7 @@ const ViewPosOrder =() =>{
                     <Link to="/pos" className="btn btn-success">Pos +</Link>
                 </div>
                   
-                    <table className="table table-hover">
+                <table className="table table-hover" id="example_table" style={{ width: '100%' }}>
                       <thead>
                         <tr>
                           <th>Order Number</th>

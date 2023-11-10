@@ -5,7 +5,7 @@ import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate,Link ,useParams} from "react-router-dom";
-
+import apiConfig from '../layouts/base_url';
 const EditFoodCategory =() =>{
 
     const {id} =useParams()
@@ -17,7 +17,7 @@ const EditFoodCategory =() =>{
 
     useEffect( ()=>{
 
-        axios.get('http://localhost:5000/api/foodcategory/getfoodcategory/'+id)
+        axios.get(`${apiConfig.baseURL}/api/foodcategory/getfoodcategory/${id}`)
         .then(res => { console.log(res)
             setfoodCategoryName(res.data.foodcategoryname)
              setDescription(res.data.description)
@@ -31,7 +31,7 @@ const EditFoodCategory =() =>{
     const handleSubmit =(event) =>{
 
         event.preventDefault();
-        axios.put('http://localhost:5000/api/foodcategory/updatefoodCategory/'+id,{foodcategoryname,description})
+        axios.put(`${apiConfig.baseURL}/api/foodcategory/updatefoodCategory/${id}`,{foodcategoryname,description})
         .then(res =>{
 
             console.log(res);

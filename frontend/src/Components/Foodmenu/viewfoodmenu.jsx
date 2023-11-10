@@ -6,18 +6,27 @@ import Footer from '../layouts/Footer';
 
 import axios from "axios";
 import { redirect, useNavigate,Link } from "react-router-dom";
-
+import apiConfig from '../layouts/base_url';
 
 const ViewFoodMenu =() =>{
 
   const [foodmenus, setFoodmenu] = useState([]);
 
-  useEffect(() => {
-    fetch('http://localhost:5000/api/foodmenu/getallfoodmenu')
-      .then((response) => response.json())
-      .then((data) => setFoodmenu(data))
-      .catch((error) => console.error(error));
-  }, []);
+
+
+  useEffect( ()=>{
+
+    axios.get(`${apiConfig.baseURL}/api/foodmenu/getallfoodmenu`)
+    .then((res) => {
+      setFoodmenu(res.data);
+
+      // Initialize DataTables after data is loaded
+      $(document).ready(function () {
+        $('#example_table').DataTable();
+      });
+    })
+    .catch((err) => console.log(err));
+}, []);
 
 
   const handleDelete =(id) =>
@@ -40,7 +49,7 @@ const ViewFoodMenu =() =>{
                     <Link to="/addfoodmenu" className="btn btn-success">Add +</Link>
                 </div>
                   
-                    <table className="table table-hover">
+                <table className="table table-hover"  id="example_table" style={{ width: "100%" }}>
                       <thead>
                         <tr>
                           <th>Food Name</th>
