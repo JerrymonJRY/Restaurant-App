@@ -14,7 +14,8 @@ const {getposCategory,
     getKot,
     insertPoshold,
     getHold,
-    todayOrder
+    todayOrder,
+    insertQuickpay
 } =require('../controller/posController');
 
 
@@ -32,6 +33,7 @@ router.get('/getKot/:id',getKot);
 router.post('/createHold',insertPoshold);
 router.get('/gethold',getHold);
 router.get('/gettodayOrder',todayOrder);
+router.post('/createQuickpay',insertQuickpay);
 
 
 

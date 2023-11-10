@@ -687,6 +687,62 @@ const todayOrder =asyncHandler(async(req,res) =>
   
   }
 
+});
+
+const insertQuickpay =asyncHandler(async(req,res) =>{
+
+  try {
+    const  {customers,options,grandTotal,cart,vatAmount,total,foodoption,waiterId,tableId}  = req.body;
+  console.log(req.body);
+
+ const sequence = await Pos.findOne({}).sort('-ordernumber'); // Find the latest ID
+
+    let nextIdNumber = 'Burp01001023001';
+
+    if (sequence && sequence.ordernumber) {
+      // Extract and increment the numeric part of the latest ID
+      const lastIdNumber = sequence.ordernumber;
+      const numericPart = lastIdNumber.substring(11); // Extract the numeric part
+      const nextNumericValue = parseInt(numericPart, 10) + 1;
+      nextIdNumber = `Burp0100102${nextNumericValue.toString().padStart(3, '0')}`;
+    }
+
+    // Check if the ID number already exists
+    const exists = await Pos.findOne({ ordernumber: nextIdNumber });
+
+    if (exists) {
+      return res.status(400).json({ error: 'ID number already exists' });
+    }
+    let paymentstatus ="paid";
+
+    const newEntry = new Pos({ 
+      ordernumber: nextIdNumber,
+      customers:customers,
+      options:foodoption,
+      cart:cart,
+      total:total,
+      grandTotal:grandTotal,
+      vatAmount:vatAmount,
+      waiterId:waiterId,
+      tableId:tableId,
+      paymentstatus:paymentstatus,
+
+
+     
+    
+    });
+    await newEntry.save();
+
+ 
+
+  
+
+    res.json(newEntry);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while inserting data' });
+  }
+
 })
 
 
@@ -704,5 +760,6 @@ module.exports =
   getKot,
   insertPoshold,
   getHold,
-  todayOrder
+  todayOrder,
+  insertQuickpay
 };

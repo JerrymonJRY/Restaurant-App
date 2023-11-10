@@ -6,6 +6,7 @@ import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate,useParams } from "react-router-dom";
 import apiConfig from '../layouts/base_url';
+import Swal from 'sweetalert2';
 const EditVat =() =>{
 
     const {id} =useParams()
@@ -28,17 +29,46 @@ const EditVat =() =>{
     },[])
 
 
-    const handleSubmit =(event) =>{
+    // const handleSubmit =(event) =>{
 
-        event.preventDefault();
-        axios.put(`${apiConfig.baseURL}/api/vat/updateVat/${id}`,{vatname,percentage})
-        .then(res =>{
+    //     event.preventDefault();
+    //     axios.put(`${apiConfig.baseURL}/api/vat/updateVat/${id}`,{vatname,percentage})
+    //     .then(res =>{
 
-            console.log(res);
+    //         console.log(res);
+    //         navigate('/viewVat');
+    //     })
+    //     .catch(err =>console.log(err));
+    // }
+
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      axios
+        .put(`${apiConfig.baseURL}/api/vat/updateVat/${id}`, { vatname, percentage })
+        .then((res) => {
+          console.log(res);
+  
+          // Display success message using SweetAlert2
+          Swal.fire({
+            icon: 'success',
+            title: 'VAT Updated!',
+            text: 'Your VAT has been updated successfully.',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            },
+          }).then(() => {
             navigate('/viewVat');
+          });
         })
-        .catch(err =>console.log(err));
-    }
+        .catch((err) => {
+          console.log(err);
+          // Handle error and display an error message if needed
+        });
+    };
 
    
     return (

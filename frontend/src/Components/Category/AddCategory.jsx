@@ -6,6 +6,8 @@ import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate } from "react-router-dom";
 import apiConfig from '../layouts/base_url';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const AddCategory =() =>{
@@ -19,28 +21,30 @@ const AddCategory =() =>{
     })
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
-    const handleSubmit =(event) =>{
-
+    const handleSubmit = (event) => {
       const validationErrors = validateForm(values);
-
-
-
-        event.preventDefault();
-        if (Object.keys(validationErrors).length === 0) {
-        axios.post(`${apiConfig.baseURL}/api/category/createcategory`,values)
-        .then(res =>{
-
+  
+      event.preventDefault();
+  
+      if (Object.keys(validationErrors).length === 0) {
+        axios
+          .post(`${apiConfig.baseURL}/api/category/createcategory`, values)
+          .then((res) => {
             console.log(res);
             navigate('/viewingredientfoodcategory');
-        })
-        .catch(err =>console.log(err));
-      }
-      else {
+            
+            // Display Toastify success message
+            toast.success('Category created successfully!', {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 3000, // milliseconds
+            });
+          })
+          .catch((err) => console.log(err));
+      } else {
         // Set validation errors
         setErrors(validationErrors);
       }
-    }
-
+    };
 
     const validateForm = (data) => {
       let errors = {};

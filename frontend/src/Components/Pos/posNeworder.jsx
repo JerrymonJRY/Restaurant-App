@@ -283,16 +283,7 @@ console.info({customers})
     setCart(addQuantity)
   }
 
-  // const handlePlaceorder =(event) =>{
-  //   event.preventDefault();
-  //   if (cart.length < 1) {
-  //     alert("cart is empty")
-  //   }
-  //   else if(!options)
-  //   {
-  //     alert("Please select options");
-  //   }
-  // }
+
   const handlePlaceorder = (event) => {
     event.preventDefault();
     if(!selectWaiter)
@@ -360,8 +351,7 @@ console.info({customers})
       posData.append("vatAmount",vatAmount);
       posData.append("total",totalAmount);
      posData.append("foodoption",options);
-    //  posData.append("tableId",selectTable._id);
-    //  posData.append("waiterId",selectWaiter._id);
+   
     if (selectTable && selectTable._id) {
       posData.append("tableId", selectTable._id);
   }
@@ -602,6 +592,115 @@ console.info({customers})
   }
 
 
+  const handleQuickPay =(event) =>
+  {
+    event.preventDefault();
+    if (cart.length < 1) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Cart is empty',
+        text: 'Please add items to your cart before placing an order.',
+      });
+    } else if (!options) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Options not selected',
+        text: 'Please select options before placing an order.',
+      });
+    }
+    else if (options.toLowerCase() === 'dine in') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Dine-In Not Allowed',
+        text: 'Quick pay is not allowed for dine-in orders.',
+      });
+    }
+     else {
+      setPlaceOrder({
+        option: options,
+        waiter: selectWaiter,
+        customer: selectCustomer,
+        table: selectTable,
+        cart: cart,
+        total: totalAmount,
+        vat: vatAmount,
+        grandTotal: grandTotal 
+      })
+      console.log(options);
+
+      var posData = new FormData();
+     // posData.append("customers",selectCustomer._id);
+     if (selectCustomer && selectCustomer._id) {
+      posData.append("customers", selectCustomer._id);
+  }
+      posData.append("options",options);
+      posData.append("grandTotal",grandTotal);
+ 
+      for (let i = 0; i < cart.length; i++) {
+       posData.append(
+         `cart[${i}].foodmenuId`,
+        cart[i]._id
+       );
+       posData.append(
+         `cart[${i}].salesprice`,
+         cart[i].salesprice
+       );
+       posData.append(
+         `cart[${i}].quantity`,
+         cart[i].quantity
+       );
+     
+    
+     }
+ 
+
+      posData.append("vatAmount",vatAmount);
+      posData.append("total",totalAmount);
+     posData.append("foodoption",options);
+   
+    if (selectTable && selectTable._id) {
+      posData.append("tableId", selectTable._id);
+  }
+  
+  if (selectWaiter && selectWaiter._id) {
+      posData.append("waiterId", selectWaiter._id);
+  }
+     //console.log(posData);
+     
+   
+       const config = {
+         headers: {
+           'Content-Type': 'application/json',
+         }
+       };
+   
+        axios
+       .post(`${apiConfig.baseURL}/api/pos/createQuickpay`, posData, config)
+       
+        .then(res => {
+          Swal.fire({
+            title: 'Success!',
+            text: 'Do you want to print the order?',
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, print',
+            cancelButtonText: 'No',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Open your print modal here
+              console.log(res);
+              openPrintModal(res.data);
+            } else {
+              navigate('/posorder');
+            }
+          });
+        })
+        .catch(err => console.log(err));
+    }
+
+  }
+
+
 
 
  
@@ -621,8 +720,8 @@ console.info({customers})
       <div className="col-sm-5 col-lg-4">
         <div className="wraper shdw">
 
-          <div className="table-responsive vh-70">
-            <table className="table">
+          <div className="table-responsive vh-70" style={{ height: "300px", overflowY: "scroll" }}>
+            <table className="table ">
               <thead>
                 <tr className="thead-light">
                   <th scope="col">No.</th>
@@ -634,7 +733,7 @@ console.info({customers})
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody >
                 {cart ? cart.map((cartProduct, key) => <tr key={key}>
                   {/* <td>{cartProduct._id}</td> */}
                   <td>{key + 1}</td>
@@ -677,16 +776,16 @@ console.info({customers})
               <tr>
                 <td>
 
-                  <div className="custom-control custom-radio custom-control-inline">
+                  {/* <div className="custom-control custom-radio custom-control-inline">
                     <input type="radio" className="custom-control-input" id="defaultInline1" name="inlineDefaultRadiosExample" />
                     <label className="custom-control-label" htmlFor="defaultInline1">Cash</label>
-                  </div>
+                  </div> */}
 
 
-                  <div className="custom-control custom-radio custom-control-inline">
+                  {/* <div className="custom-control custom-radio custom-control-inline">
                     <input type="radio" className="custom-control-input" id="defaultInline2" name="inlineDefaultRadiosExample" />
                     <label className="custom-control-label" htmlFor="defaultInline2">Card</label>
-                  </div>
+                  </div> */}
                 </td>
                 <th ></th>
               </tr>
@@ -697,7 +796,7 @@ console.info({customers})
             <div className="col-lg-6"><button type="button" className="btn btn-danger w-100 mb-2 p-2">Cancel</button></div>
             <div className="col-lg-6 pl-0"><button type="button" onClick={handlePlaceorder} className="btn btn-warning w-100 mb-2 p-2">Place Order</button></div>
             <div className="col-lg-6"><button type="button" onClick={handleHold} className="btn btn-danger w-100 mb-2 p-2">Hold</button></div>
-            <div className="col-lg-6 pl-0"><button type="button" className="btn btn-success w-100 mb-2 p-2">Quick Pay</button></div>
+            <div className="col-lg-6 pl-0"><button type="button" onClick={handleQuickPay} className="btn btn-success w-100 mb-2 p-2">Quick Pay</button></div>
           </div>
         </div>
       </div>
@@ -763,18 +862,16 @@ console.info({customers})
             {/* { */}
               {/* showWaiters && */}
               <div className="row">
-                {
-                waiter.map((wait, index) => (
-                    <div className="col-sm-3 col-md-3">
-                      {/* <div className="menu-box" onClick={() => handleWaiter(wait)}> */}
-                      <div
-            className={`menu-box ${wait === selectWaiter ? 'selectable' : 'read-only'}`}
+              {waiter.map((wait, index) => (
+      <div key={index} className={`col-sm-3 col-md-3 ${selectWaiter === wait ? 'disabled' : ''}`}>
+          <div
+               className={`menu-box ${selectWaiter ? 'read-only' : 'selectable'}`}
             onClick={() => handleWaiter(wait)}
           >
-                        <h6>{wait.waitername}</h6>
-                      </div>
-                    </div>
-                  ))}
+            <h6>{wait.waitername}</h6>
+          </div>
+        </div>
+      ))}
               </div>
             {/* } */}
           </div>
@@ -782,8 +879,10 @@ console.info({customers})
             <div className="row">
               {
                 table.map((tables, index) => (
-                  <div className="col-sm-3 col-md-3">
-                    <div className="menu-box" onClick={(e) => {
+                  // <div className="col-sm-3 col-md-3">
+                  <div key={index} className={`col-sm-3 col-md-3 ${selectTable === tables ? 'disabled' : ''}`}>
+                     <div
+               className={`menu-box ${selectTable ? 'read-only' : 'selectable'}`} onClick={(e) => {
                       setSelectTable(tables)
                       setShowFoodMenuTab(true)
                     }}>

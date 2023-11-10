@@ -6,6 +6,7 @@ import Footer from '../layouts/Footer';
 import axios from "axios";
 import { redirect, useNavigate } from "react-router-dom";
 import apiConfig from '../layouts/base_url';
+import Swal from 'sweetalert2';
 const AddVat =() =>{
 
     const [values,setValues] = useState({
@@ -17,25 +18,37 @@ const AddVat =() =>{
     })
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
-    const handleSubmit =(event) =>{
 
-        event.preventDefault();
-        const validationErrors = validateForm(values);
-        if (Object.keys(validationErrors).length === 0) {
-        axios.post(`${apiConfig.baseURL}/api/vat/createvat`,values)
-        .then(res =>{
 
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      const validationErrors = validateForm(values);
+    
+      if (Object.keys(validationErrors).length === 0) {
+        axios.post(`${apiConfig.baseURL}/api/vat/createvat`, values)
+          .then((res) => {
             console.log(res);
-            navigate('/viewVat');
-        })
-        .catch(err =>console.log(err));
-      }
-      else {
+            Swal.fire({
+              icon: 'success',
+              title: 'VAT Created!',
+              text: 'Your Vat has been created successfully.',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+              },
+            }).then(() => {
+              navigate('/viewVat');
+            });
+          })
+          .catch((err) => console.log(err));
+      } else {
         // Set validation errors
         setErrors(validationErrors);
       }
-
-    }
+    };
 
 
     const validateForm = (data) => {

@@ -9,7 +9,12 @@ const PosTodayOrder =() =>{
 
     const [posTodayorder, setPosTodayorder] = useState([]);
 
-    const totalGrandTotal = posTodayorder.reduce((total, order) => total + order.grandTotal, 0);
+ 
+
+   const totalGrandTotal = Array.isArray(posTodayorder)
+   ? posTodayorder.reduce((total, order) => total + order.grandTotal, 0)
+   : 0;
+
 
     useEffect(() => {
         fetch(`${apiConfig.baseURL}/api/pos/gettodayOrder`)
@@ -37,7 +42,9 @@ const PosTodayOrder =() =>{
                     </thead>
                     <tbody>
                        
-                        {posTodayorder.map((order,key) => (
+  {
+   Array.isArray(posTodayorder) && posTodayorder.length > 0 ? ( 
+   posTodayorder.map((order,key) => (
     <tr key={order._id}>
      <td>{key + 1}</td>
       <td>{order.options}</td>
@@ -48,15 +55,20 @@ const PosTodayOrder =() =>{
       <td>{order.grandTotal}</td>
 
       <td>
-        <Link to={`/posorderdetails/${order._id}`} className="btn btn-primary">
-          Print
+        <Link to={`/posorderdetails/${order._id}`} className="btn btn-primary" data-toggle="tooltip" data-placement="right" title="Print">
+        <i className="mdi mdi-cloud-print-outline"></i>
         </Link>
-        <button onClick={(e) => handleDelete(order._id)} className="btn btn-danger">
-          KOT
+        <button onClick={(e) => handleDelete(order._id)} className="btn btn-danger" data-toggle="tooltip" data-placement="right" title="Kitchen Order">
+          <i className="mdi mdi-food-variant"></i>
         </button>
       </td>
     </tr>
-  ))}
+  ))
+  ):(
+    <tr>
+    <td colSpan="7">No data available</td>
+  </tr>
+  )}
                        
                     </tbody>
                     <tfoot>

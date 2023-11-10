@@ -390,3 +390,19 @@ a.nav-link.nav-link-waiter.active img{
     margin-right: auto;
     width: 50%;
   }
+
+  .disabled {
+    opacity: 0.5; 
+    pointer-events: none; 
+  }
+
+  .read-only {
+    opacity: 0.5; 
+    cursor: not-allowed; /
+   
+  }
+  .scrolstable {
+    display: block;
+    height: 500px;
+    overflow-y: scroll;
+  }

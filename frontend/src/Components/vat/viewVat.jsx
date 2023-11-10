@@ -41,28 +41,44 @@ const ViewVat =() =>{
   //     }
   // }
 
+
+
+
   const handleDelete = (id) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: 'You are about to delete this item.',
+      text: "You won't be able to revert this!",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        axios
-          .delete(`${apiConfig.baseURL}/api/vat/deleteVat/${id}`)
+        axios.delete(`${apiConfig.baseURL}/api/vat/deleteVat/${id}`)
           .then((res) => {
-            // Handle success
-            navigate('/viewVat');
-            console.log(res);
+            Swal.fire({
+              icon: 'success',
+              title: 'Deleted!',
+              text: 'Your file has been deleted.',
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+              }
+            });
+            // Refresh data after successful delete
+            axios.get(`${apiConfig.baseURL}/api/vat/allvat`)
+              .then((response) => {
+                setData(response.data);
+              })
+              .catch((error) => console.error(error));
           })
-          .catch((err) => {
-            // Handle error
-            console.log(err);
-          });
+          .catch((err) => console.log(err));
       }
     });
   };
