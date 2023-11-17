@@ -5,6 +5,7 @@ const {getposCategory,
     getPosWaiter,
     getCustomer,
     getTable,
+    getDelivery,
     getposFooditems,
     insertPos,
     getAllPos,
@@ -23,6 +24,7 @@ router.get('/poscategory',getposCategory);
 router.get('/posWaiter',getPosWaiter);
 router.get('/posCustomer',getCustomer);
 router.get('/posTable',getTable);
+router.get('/posDelivery',getDelivery);
 router.get('/posfood',getposFooditems);
 router.post('/createpos',insertPos);
 router.get('/getPos',getAllPos);

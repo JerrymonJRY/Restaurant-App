@@ -24,7 +24,7 @@ const Pos =() =>{
         });
       };
 
-      
+      const [activeTab, setActiveTab] = useState('neworder');
     return (
      
             <div className="container-fluid">

@@ -21,6 +21,7 @@ const foodmenuRouter =require('./routes/foodmenuRoutes');
 const waiterRouter =require('./routes/waiterRoutes');
 const posRouter =require('./routes/posRoutes');
 const customerRouter =require('./routes/customerRoutes');
+const deliveryRouter =require('./routes/deliveryRoutes');
 //const posRouter =require('./routes/posRoutes');
 
 const PORT =process.env.PORT || 4000;
@@ -41,6 +42,7 @@ app.use('/api/foodmenu',foodmenuRouter);
 app.use('/api/waiter',waiterRouter);
 app.use('/api/pos',posRouter);
 app.use('/api/customer',customerRouter);
+app.use('/api/delivery',deliveryRouter);
 // app.use('/',(req,res) =>{
 //     res.send("Hellow From Server Side");
 // });

@@ -22,8 +22,6 @@ const PosNewOrder = () => {
   //Value Declare
   const [waiter, setWaiter] = useState([]);
   const [selectWaiter, setSelectWaiter] = useState();
-  const [delivery ,setDelivery] =useState([]);
-  const [selectDelivery,setSelectDelivery] =useState();
   const [table, setTable] = useState([]);
   const [selectTable, setSelectTable] = useState();
   const [foodCategory, setFoodcategory] = useState([]);
@@ -36,17 +34,11 @@ const PosNewOrder = () => {
   const [grandTotal, setGrandTotal] = useState(0);
   const [options, setOptions] = useState('');
   const [showCustomerTab, setShowCustomerTab] = useState(false);
-  const [showDeliveryTab, setShowDeliveryTab] = useState(false);
   const [showFoodMenuTab, setShowFoodMenuTab] = useState(false);
   const [customers, setCustomers] = useState([]);
   const [selectCustomer, setSelectCustomer] = useState();
   const [placeorder, setPlaceOrder] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
-
-  const [searchWaiter, setSearchWaiter] = useState('');
-  const [searchTable, setSearchTable] =useState('');
-  const [searchCustomer,setSearchCustomer] =useState('');
-  const [searchDeliveryPerson,setSearchDeliveryPerson] =useState('');
 
   const [showTable, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -54,39 +46,6 @@ const PosNewOrder = () => {
 const handleSearch = (e) => {
   setSearchTerm(e.target.value);
 };
-
-const handleSearchWaiter =(e) =>{
-  setSearchWaiter(e.target.value);
-}
-const filteredWaiters = waiter.filter((wait) =>
-  wait.waitername.toLowerCase().includes(searchWaiter.toLowerCase())
-);
-const handleSearchTable =(e) =>
-{
-  setSearchTable(e.target.value);
-}
-
-const filteredTables = table.filter((tables) =>
-tables.tablename.toLowerCase().includes(searchTable.toLowerCase())
-);
-
-const handleSearchCustomer =(e) =>
-{
-  setSearchCustomer(e.target.value);
-}
-
-const filteredCustomers = customers.filter((customer) =>
-customer.customername.toLowerCase().includes(searchCustomer.toLowerCase())
-);
-
-const handleSearchDelivery =(e) =>
-{
-  setSearchDeliveryPerson(e.target.value);
-}
-
-const filteredDelivery = delivery.filter((delivery) =>
-delivery.dliveryname.toLowerCase().includes(searchDeliveryPerson.toLowerCase())
-);
 
 console.info({table})
   const handleDinein = (e) => {
@@ -103,7 +62,18 @@ console.info({table})
 
   const handleWaiter = (details) => {
 
+    // setEnableDinein(true);
+    // setSelectWaiter(e.target.value);
+    // if(selectWaiter)
+    // {
+    //     setTabEnabled(false);
+    //      if (!isTabEnabled) {
+    //      handleDinein();
+    //      }
+    // }
+    // else{
 
+    // }
     setSelectWaiter(details);
     setTabEnabled({
       dineIn: true,
@@ -139,22 +109,15 @@ console.info({table})
     })
     setOptions("Delivery")
     setShowCustomerTab(true);
-    setShowDeliveryTab(true);
   }
 
   const handleCustomer = (e) => {
-    setShowDeliveryTab(false);
+
   }
 
   const handleMenu = (e) => {
 
   }
-
-  const handleDeliveryPerson =(e) =>{
-    setShowCustomerTab(false);
-  }
-
-
 
 
 console.info({customers})
@@ -164,17 +127,6 @@ console.info({customers})
     axios.get(`${apiConfig.baseURL}/api/pos/posWaiter`)
       .then((response) => {
         setWaiter(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
-
-  useEffect(() => {
-
-    axios.get(`${apiConfig.baseURL}/api/pos/posDelivery`)
-      .then((response) => {
-        setDelivery(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -363,8 +315,7 @@ console.info({customers})
         cart: cart,
         total: totalAmount,
         vat: vatAmount,
-        grandTotal: grandTotal,
-        delivery:selectDelivery, 
+        grandTotal: grandTotal 
       })
 
       var posData = new FormData();
@@ -372,10 +323,6 @@ console.info({customers})
      if (selectCustomer && selectCustomer._id) {
       posData.append("customers", selectCustomer._id);
   }
-
-  if (selectDelivery && selectDelivery._id) {
-    posData.append("delivery", selectDelivery._id);
-}
       posData.append("options",options);
       posData.append("grandTotal",grandTotal);
  
@@ -562,12 +509,10 @@ console.info({customers})
         waiter: selectWaiter,
         customer: selectCustomer,
         table: selectTable,
-        deliveryperson:selectDelivery,
         cart: cart,
         total: totalAmount,
         vat: vatAmount,
-        grandTotal: grandTotal ,
-        delivery:selectDelivery, 
+        grandTotal: grandTotal 
       })
 
       var posData = new FormData();
@@ -575,9 +520,6 @@ console.info({customers})
      if (selectCustomer && selectCustomer._id) {
       posData.append("customers", selectCustomer._id);
   }
-  if (selectDelivery && selectDelivery._id) {
-    posData.append("delivery", selectDelivery._id);
-}
       posData.append("options",options);
       posData.append("grandTotal",grandTotal);
  
@@ -682,8 +624,7 @@ console.info({customers})
         cart: cart,
         total: totalAmount,
         vat: vatAmount,
-        grandTotal: grandTotal,
-        delivery:selectDelivery,  
+        grandTotal: grandTotal 
       })
       console.log(options);
 
@@ -692,9 +633,6 @@ console.info({customers})
      if (selectCustomer && selectCustomer._id) {
       posData.append("customers", selectCustomer._id);
   }
-  if (selectDelivery && selectDelivery._id) {
-    posData.append("delivery", selectDelivery._id);
-}
       posData.append("options",options);
       posData.append("grandTotal",grandTotal);
  
@@ -871,7 +809,6 @@ console.info({customers})
                 onClick={() => {
                   setSelectWaiter("")
                   setSelectCustomer("")
-                  setSelectDelivery("")
                   setSelectTable("")
                   setOptions("")
                   setTabEnabled({
@@ -882,7 +819,6 @@ console.info({customers})
                   setEnableDinein(false)
                   setShowCustomerTab(false)
                   setShowFoodMenuTab(false)
-                  setShowDeliveryTab(false)
                 }}
                 data-toggle="tab" href="#waiter" role="tab" aria-controls="kiwi2" aria-selected="false">Waiter</a>
             </li>
@@ -908,11 +844,6 @@ console.info({customers})
                 <a className="nav-link " onClick={handleCustomer} data-toggle="tab" href="#customer" role="tab" aria-controls="duck2" aria-selected="true">Customer</a>
               </li>
             }
-             {
-              showDeliveryTab && <li className="nav-item">
-                <a className="nav-link " onClick={handleDeliveryPerson} data-toggle="tab" href="#delivery" role="tab" aria-controls="duck2" aria-selected="true">Delivery Boy</a>
-              </li>
-            }
             {
               tabEnabled.takeaway && <li className="nav-item">
                 <a className="nav-link " onClick={handleTakeway} data-toggle="tab" href="#dinein" role="tab" aria-controls="duck2" aria-selected="true">Take Away</a>
@@ -930,16 +861,8 @@ console.info({customers})
 
             {/* { */}
               {/* showWaiters && */}
-
-              <input
-        type="text"
-        placeholder="Search waiters..."
-        value={searchWaiter}
-        className="form-control"
-        onChange={handleSearchWaiter}
-      />
               <div className="row">
-              {filteredWaiters.map((wait, index) => (
+              {waiter.map((wait, index) => (
       <div key={index} className={`col-sm-3 col-md-3 ${selectWaiter === wait ? 'disabled' : ''}`}>
           <div
                className={`menu-box ${selectWaiter ? 'read-only' : 'selectable'}`}
@@ -953,17 +876,9 @@ console.info({customers})
             {/* } */}
           </div>
           <div className="tab-pane " id="table" role="tabpanel" aria-labelledby="duck-tab">
-
-          <input
-        type="text"
-        placeholder="Search Tables..."
-        value={searchTable}
-        className="form-control"
-        onChange={handleSearchTable}
-      />
             <div className="row">
               {
-                filteredTables.map((tables, index) => (
+                table.map((tables, index) => (
                   // <div className="col-sm-3 col-md-3">
                   <div key={index} className={`col-sm-3 col-md-3 ${selectTable === tables ? 'disabled' : ''}`}>
                      <div
@@ -979,49 +894,16 @@ console.info({customers})
             </div>
           </div>
           <div className="tab-pane " id="customer" role="tabpanel" aria-labelledby="duck-tab">
-          <input
-        type="text"
-        placeholder="Search Customers..."
-        value={searchCustomer}
-        className="form-control"
-        onChange={handleSearchCustomer}
-      />
             <div className="row">
               {
-                filteredCustomers.map((customer, index) => (
+                customers.map((customer, index) => (
                   <div className="col-sm-3 col-md-3">
                     <div className="menu-box" onClick={(e) => {
                       setSelectCustomer(customer)
                       setShowFoodMenuTab(true)
-                      setShowDeliveryTab(false)
                     }}>
 
                       <h6>{customer.customername}</h6>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
-          <div className="tab-pane " id="delivery" role="tabpanel" aria-labelledby="duck-tab">
-            
-          <input
-        type="text"
-        placeholder="Search Delivery..."
-        value={searchDeliveryPerson}
-        className="form-control"
-        onChange={handleSearchDelivery}
-      />
-            <div className="row">
-              {
-                filteredDelivery.map((delivery, index) => (
-                  <div className="col-sm-3 col-md-3">
-                    <div className="menu-box" onClick={(e) => {
-                      setSelectDelivery(delivery)
-                      setShowFoodMenuTab(true)
-                      setShowCustomerTab(false)
-                    }}>
-
-                      <h6>{delivery.dliveryname}</h6>
                     </div>
                   </div>
                 ))}

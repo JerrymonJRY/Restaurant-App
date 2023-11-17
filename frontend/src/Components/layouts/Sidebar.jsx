@@ -62,6 +62,7 @@ const Sidebar =() =>{
               <ul className="nav flex-column sub-menu">
               {/* <li className="nav-item"> <a className="nav-link" href="">Designation </a></li> */}
               <li className="nav-item"> <Link className="nav-link" to="/viewWaiter"> Waiter</Link> </li>
+              <li className="nav-item"> <Link className="nav-link" to="/viewDelivery">Delivery</Link> </li>
               
               </ul>
             </div>

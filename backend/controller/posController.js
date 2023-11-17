@@ -6,6 +6,7 @@ const Table =require('../models/tableModel');
 const Customer =require('../models/customerModel');
 const Foodmenu =require('../models/foodmenuModel');
 const Pos  =require('../models/posModels');
+const Delivery =require('../models/deliveryModel');
 
 
 //Food Category
@@ -51,6 +52,17 @@ const getTable =asyncHandler(async (req,res) =>{
 });
 
 
+const getDelivery =asyncHandler(async(req,res) =>{
+  try {
+    const getDelivery = await Delivery.find();
+    res.json(getDelivery);
+  } catch (error) {
+    throw new Error(error);
+  }
+
+
+})
+
 const getposFooditems =asyncHandler(async (req,res) =>{
   try {
     const posfoodmenu = await Foodmenu.aggregate([
@@ -90,7 +102,7 @@ const getposFooditems =asyncHandler(async (req,res) =>{
 
 const insertPos =asyncHandler(async(req,res) =>{
   try {
-    const  {customers,options,grandTotal,cart,vatAmount,total,foodoption,waiterId,tableId}  = req.body;
+    const  {customers,options,grandTotal,cart,vatAmount,total,foodoption,waiterId,tableId,delivery}  = req.body;
   console.log(req.body);
 
  const sequence = await Pos.findOne({}).sort('-ordernumber'); // Find the latest ID
@@ -124,6 +136,7 @@ const insertPos =asyncHandler(async(req,res) =>{
       waiterId:waiterId,
       tableId:tableId,
       paymentstatus:paymentstatus,
+      delivery:delivery,
 
 
      
@@ -527,7 +540,7 @@ const getKot =asyncHandler(async(req,res) =>
 
 const insertPoshold =asyncHandler(async(req,res) =>{
   try {
-    const  {customers,options,grandTotal,cart,vatAmount,total,foodoption,waiterId,tableId}  = req.body;
+    const  {customers,options,grandTotal,cart,vatAmount,total,foodoption,waiterId,tableId,delivery}  = req.body;
   console.log(req.body);
 
  const sequence = await Pos.findOne({}).sort('-ordernumber'); // Find the latest ID
@@ -561,6 +574,7 @@ const insertPoshold =asyncHandler(async(req,res) =>{
       waiterId:waiterId,
       tableId:tableId,
       hold:hold,
+      delivery:delivery,
 
 
      
@@ -692,7 +706,7 @@ const todayOrder =asyncHandler(async(req,res) =>
 const insertQuickpay =asyncHandler(async(req,res) =>{
 
   try {
-    const  {customers,options,grandTotal,cart,vatAmount,total,foodoption,waiterId,tableId}  = req.body;
+    const  {customers,options,grandTotal,cart,vatAmount,total,foodoption,waiterId,tableId,delivery}  = req.body;
   console.log(req.body);
 
  const sequence = await Pos.findOne({}).sort('-ordernumber'); // Find the latest ID
@@ -726,6 +740,7 @@ const insertQuickpay =asyncHandler(async(req,res) =>{
       waiterId:waiterId,
       tableId:tableId,
       paymentstatus:paymentstatus,
+      delivery:delivery,
 
 
      
@@ -751,6 +766,7 @@ module.exports =
   getPosWaiter,
   getCustomer,
   getTable,
+  getDelivery,
   getposFooditems,
   insertPos,
   getAllPos,

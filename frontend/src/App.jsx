@@ -35,6 +35,8 @@ import AddCustomer from './Components/Customer/addCustomer'
 import EditCustomer from './Components/Customer/editCustomer'
 import ViewPosOrder from './Components/Orders/viewPosorder'
 import ViewPosOrderdetails from './Components/Orders/viewOrderdetails'
+import ViewDelivery from './Components/Delivery/viewDelivery';
+import AddDelivery from './Components/Delivery/addDelivery';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -84,6 +86,10 @@ function App() {
       <Route path='/viewCustomer' element={<ViewCustomer />}></Route>
       <Route path='/addCustomer' element={<AddCustomer />}></Route>
       <Route path='/editCustomer/:id' element={<EditCustomer />}></Route>
+
+      {/* Delivery */}
+      <Route path='/viewDelivery' element={<ViewDelivery />}></Route>
+      <Route path='/addDelivery' element={<AddDelivery />}></Route>
 
     </Routes>
   </BrowserRouter>

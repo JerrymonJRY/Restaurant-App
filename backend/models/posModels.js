@@ -36,6 +36,11 @@ ordernumber:{type:String},
     type: mongoose.Schema.ObjectId,
        ref: "Waiter",
   },
+  delivery:{
+    type: mongoose.Schema.ObjectId,
+    ref: "Delivery",
+    default: null,
+  },
   date: { type: Date, default: Date.now },
   paymentstatus:{
     type: String,
