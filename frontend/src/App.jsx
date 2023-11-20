@@ -1,4 +1,6 @@
-import { useState } from 'react'
+
+import React, { Suspense, lazy,useState  } from 'react';
+import { BrowserRouter,Routes,Route,Navigate} from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Swal from 'sweetalert2';
 import "datatables.net-dt/js/dataTables.dataTables"
@@ -6,7 +8,7 @@ import "datatables.net-dt/css/jquery.dataTables.min.css"
 
 import Login from './Components/userPages/login'
 import Dashboard from './Components/Dashboard/dashboard'
-import { BrowserRouter,Routes,Route } from 'react-router-dom'
+
 import AddCategory from './Components/Category/AddCategory'
 import ViewCategory from './Components/Category/ViewCategory'
 import ViewIngredientUnit from './Components/Ingredient/unit/viewIngredientUnit'
@@ -37,11 +39,18 @@ import ViewPosOrder from './Components/Orders/viewPosorder'
 import ViewPosOrderdetails from './Components/Orders/viewOrderdetails'
 import ViewDelivery from './Components/Delivery/viewDelivery';
 import AddDelivery from './Components/Delivery/addDelivery';
+import ViewSupplier from './Components/Supplier/viewSupplier';
+import AddSupplier from './Components/Supplier/addSupplier';
+import Spinner from './Components/layouts/Spinner';
+import ViewPurchase from './Components/Purchase/viewPurchase';
+import AddPurchase from './Components/Purchase/addPurchase';
+import EditPurchase from './Components/Purchase/editPurchase';
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
+    <Suspense fallback={<Spinner />}>
   <BrowserRouter>
     <Routes>
       <Route path='/' element={<Login />} ></Route>
@@ -91,8 +100,21 @@ function App() {
       <Route path='/viewDelivery' element={<ViewDelivery />}></Route>
       <Route path='/addDelivery' element={<AddDelivery />}></Route>
 
+      {/* Supplier */}
+
+      <Route path='/viewSupplier' element={<ViewSupplier />}></Route>
+      <Route path='/addSupplier' element={<AddSupplier />}></Route>
+
+      {/* Purchase */}
+      <Route path='/viewPurchase' element={<ViewPurchase />}></Route>
+      <Route path='/addPurchase' element={<AddPurchase />}></Route>
+      <Route path='/editPurchase/:id' element={<EditPurchase />}></Route>
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   </BrowserRouter>
+
+
+</Suspense>
   )
 }
 

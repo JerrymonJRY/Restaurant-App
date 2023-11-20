@@ -119,7 +119,8 @@ const Sidebar =() =>{
             </a>
             <div className="collapse" id="general-inventory">
               <ul className="nav flex-column sub-menu">
-              <li className="nav-item"> <a className="nav-link" href="">Supplier </a></li>
+              <li className="nav-item"> <Link className="nav-link" to="/viewSupplier"> Supplier</Link></li>
+              <li className="nav-item"> <Link className="nav-link" to="/viewPurchase"> Purchase</Link></li>
               {/* <li className="nav-item"> <Link className="nav-link" to="/viewWaiter"> Waiter</Link> </li> */}
               
               </ul>

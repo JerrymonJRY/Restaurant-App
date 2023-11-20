@@ -18,24 +18,24 @@
         }
 
         //Variables on page load
-        var $myCarousel = $("#minimal-bootstrap-carousel"),
-            $firstAnimatingElems = $myCarousel
-            .find(".carousel-item:first")
-            .find("[data-animation ^= 'animated']");
+        // var $myCarousel = $("#minimal-bootstrap-carousel"),
+        //     $firstAnimatingElems = $myCarousel
+        //     .find(".carousel-item:first")
+        //     .find("[data-animation ^= 'animated']");
 
-        //Initialize carousel
-        $myCarousel.carousel();
+        // //Initialize carousel
+        // $myCarousel.carousel();
 
         //Animate captions in first slide on page load
-        doAnimations($firstAnimatingElems);
+        // doAnimations($firstAnimatingElems);
 
-        //Other slides to be animated on carousel slide event
-        $myCarousel.on("slide.bs.carousel", function(e) {
-            var $animatingElems = $(e.relatedTarget).find(
-                "[data-animation ^= 'animated']"
-            );
-            doAnimations($animatingElems);
-        });
+        // //Other slides to be animated on carousel slide event
+        // $myCarousel.on("slide.bs.carousel", function(e) {
+        //     var $animatingElems = $(e.relatedTarget).find(
+        //         "[data-animation ^= 'animated']"
+        //     );
+        //     doAnimations($animatingElems);
+        // });
     }
 
     bootstrapAnimatedLayer();

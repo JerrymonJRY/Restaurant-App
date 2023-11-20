@@ -487,6 +487,12 @@ console.info({customers})
       html: getFormattedOrderDetails(data), // Call a function to format the data
       icon: 'success',
       confirmButtonText: 'OK',
+    }).then((result) => {
+     
+      if (result.isConfirmed) {
+        // Refresh the page
+        location.reload();
+      }
     });
   }
 
@@ -527,13 +533,13 @@ console.info({customers})
     formattedDetails += `<p><strong>Grand Total:</strong> ${data.grandTotal}</p>`;
 
     
-    if (data.tableId) {
-      formattedDetails += `<p><strong>Table ID:</strong> ${data.tableId}</p>`;
-    }
+    // if (data.tableId) {
+    //   formattedDetails += `<p><strong>Table ID:</strong> ${data.tableId}</p>`;
+    // }
     
-    if (data.waiterId) {
-      formattedDetails += `<p><strong>Waiter ID:</strong> ${data.waiterId}</p>`;
-    }
+    // if (data.waiterId) {
+    //   formattedDetails += `<p><strong>Waiter ID:</strong> ${data.waiterId}</p>`;
+    // }
     
     formattedDetails += '</div>';
     

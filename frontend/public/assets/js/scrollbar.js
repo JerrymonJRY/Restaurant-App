@@ -38,24 +38,57 @@ var getLeftPosi = function() {
 };
 
 // Function to adjust the navigation based on screen size
+// var reAdjust = function() {
+//     var rp = $(document).width() - ($('.nav-item.nav-link').last().offset().left + $('.nav-item.nav-link').last().outerWidth());
+
+//     if ($('.wrapper-nav').outerWidth() < widthOfList() && rp < 0) {
+//         $('.scroller-right').show().css('display', 'flex');
+//     } else {
+//         $('.scroller-right').hide();
+//     }
+
+//     if (getLeftPosi() < 0) {
+//         $('.scroller-left').show().css('display', 'flex');
+//     } else {
+//         $('.scroller-left').hide();
+//     }
+// };
+
+// // Initial adjustment
+// reAdjust();
 var reAdjust = function() {
-    var rp = $(document).width() - ($('.nav-item.nav-link').last().offset().left + $('.nav-item.nav-link').last().outerWidth());
+    // Assuming these functions exist, replace them with actual implementations
+    var widthOfList = function() {
+        // Implement widthOfList logic
+    };
 
-    if ($('.wrapper-nav').outerWidth() < widthOfList() && rp < 0) {
-        $('.scroller-right').show().css('display', 'flex');
-    } else {
-        $('.scroller-right').hide();
-    }
+    var getLeftPosi = function() {
+        // Implement getLeftPosi logic
+    };
 
-    if (getLeftPosi() < 0) {
-        $('.scroller-left').show().css('display', 'flex');
-    } else {
-        $('.scroller-left').hide();
+    var navLinks = $('.nav-item.nav-link');
+    
+    if (navLinks.length > 0) {
+        var lastNavLink = navLinks.last();
+        var rp = $(document).width() - (lastNavLink.offset().left + lastNavLink.outerWidth());
+
+        if ($('.wrapper-nav').outerWidth() < widthOfList() && rp < 0) {
+            $('.scroller-right').show().css('display', 'flex');
+        } else {
+            $('.scroller-right').hide();
+        }
+
+        if (getLeftPosi() < 0) {
+            $('.scroller-left').show().css('display', 'flex');
+        } else {
+            $('.scroller-left').hide();
+        }
     }
 };
 
-// Initial adjustment
+// Call reAdjust to initialize
 reAdjust();
+
 
 // Event handler for window resize
 $(window).on('resize', function(e) {

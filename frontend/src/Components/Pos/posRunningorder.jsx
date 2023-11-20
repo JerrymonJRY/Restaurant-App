@@ -98,6 +98,7 @@ const handleMakePayment =(id) =>
       if (result.isConfirmed) {
         // Open your print modal here
         console.log(res);
+        location.reload();
        // openPrintModal(res.data);
       } else {
         navigate('/posorder');
@@ -117,6 +118,7 @@ const handlekot =(id) =>
     console.log(response.data);
     setShowKotModal(true);
   })
+  
   .catch((error) => {
     console.error('Error fetching data:', error);
   });

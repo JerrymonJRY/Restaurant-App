@@ -217,6 +217,20 @@ const getAllPos =asyncHandler(async(req,res) =>{
         }
       },
       {
+        $lookup: {
+          from: "delivery",
+          localField: "delivery",
+          foreignField: "_id",
+          as: "deliveryDetails"
+        }
+      },
+      {
+        $unwind: {
+          path: "$deliveryDetails",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        }
+      },
+      {
         $group: {
           _id: "$_id",
           ordernumber:{$first: "$ordernumber"},
@@ -236,7 +250,12 @@ const getAllPos =asyncHandler(async(req,res) =>{
           },
           customerDetails: { $first: "$customerDetails" },
 
-          waiterDetails: { $first: "$waiterDetails" }
+          waiterDetails: { $first: "$waiterDetails" },
+
+          deliveryDetails:{
+            $first:"$deliveryDetails"
+          },
+
         }
       }
       
@@ -367,6 +386,20 @@ const completePaymeny =asyncHandler(async(req,res) =>{
         },
       },
       {
+        $lookup: {
+          from: "delivery",
+          localField: "delivery",
+          foreignField: "_id",
+          as: "deliveryDetails"
+        }
+      },
+      {
+        $unwind: {
+          path: "$deliveryDetails",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        }
+      },
+      {
         $group: {
           _id: "$_id",
           ordernumber: { $first: "$ordernumber" },
@@ -386,7 +419,9 @@ const completePaymeny =asyncHandler(async(req,res) =>{
           },
           customerDetails: { $first: "$customerDetails" },
   
-          waiterDetails: { $first: "$waiterDetails" }
+          waiterDetails: { $first: "$waiterDetails" },
+
+          deliveryDetails:{ $first :"$deliveryDetails" }
         }
       },
     ]);
@@ -505,6 +540,20 @@ const getKot =asyncHandler(async(req,res) =>
         },
       },
       {
+        $lookup: {
+          from: "delivery",
+          localField: "delivery",
+          foreignField: "_id",
+          as: "deliveryDetails"
+        }
+      },
+      {
+        $unwind: {
+          path: "$deliveryDetails",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        }
+      },
+      {
         $group: {
           _id: "$_id",
           ordernumber: { $first: "$ordernumber" },
@@ -524,7 +573,8 @@ const getKot =asyncHandler(async(req,res) =>
           },
           customerDetails: { $first: "$customerDetails" },
   
-          waiterDetails: { $first: "$waiterDetails" }
+          waiterDetails: { $first: "$waiterDetails" },
+          deliveryDetails :{ $first : "$deliveryDetails" }
         }
       },
     ]);

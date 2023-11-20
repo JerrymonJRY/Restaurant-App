@@ -24,6 +24,12 @@ const Pos =() =>{
         });
       };
 
+      const myStyles = {
+        color: '#fff',
+        backgroundColor: '#fff',
+        borderColor: '#dee2e6 #dee2e6 #fff',
+      };
+
       const [activeTab, setActiveTab] = useState('neworder');
     return (
      
@@ -62,7 +68,7 @@ const Pos =() =>{
                </div>
                <div className="row">
                      <div className="tab-content mt-3">
-                          <div className="tab-pane active" id="neworder" role="tabpanel" aria-labelledby="duck-tab">
+                          <div className="tab-pane active"   style={myStyles} id="neworder" role="tabpanel" aria-labelledby="duck-tab">
                                <PosNewOrder />
 
                             </div>
