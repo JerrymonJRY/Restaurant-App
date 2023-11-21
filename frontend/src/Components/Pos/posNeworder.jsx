@@ -491,7 +491,7 @@ console.info({customers})
      
       if (result.isConfirmed) {
         // Refresh the page
-        location.reload();
+        navigate('/posorder');
       }
     });
   }
