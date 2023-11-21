@@ -47,11 +47,14 @@ app.use('/api/customer',customerRouter);
 app.use('/api/delivery',deliveryRouter);
 app.use('/api/supplier',supplierRouter);
 app.use('/api/purchase',purchaseRouter);
-// app.use('/',(req,res) =>{
-//     res.send("Hellow From Server Side");
-// });
+app.use('/',(req,res) =>{
+    res.send("Hellow From Server Side");
+});
 app.use(cookieParser());
 
 
-app.listen(PORT,() =>{
-});
+
+app.listen(PORT, () => {
+    console.log(`Server is running  at PORT ${PORT}`);
+  });
+  
