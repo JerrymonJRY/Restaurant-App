@@ -72,13 +72,7 @@
     color: #000;
     border: 0;
 }
-.main-content .nav-tabs .nav-item.show .nav-link, .nav-tabs 
-{
-
-  
-}
-
-.nav-link.active {
+.main-content .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
     border: 0;
     background: rgb(255,0,0);
     background: linear-gradient(320deg, rgba(255,0,0,1) 0%, rgba(225,8,8,1) 100%);
@@ -238,7 +232,15 @@ a.nav-link.nav-link-waiter.active img{
 .btn { margin-bottom:10px; }
 
 
+:root{
+    --first-color:#2e2e41;
+    --second-color:#5b85ff;
+    --third-color:#434354;
+    --text-color:#fff;
 
+    --box-shadow:0 5px 25px rgb(2,2,2,0.1);
+    --text-shadow:0 5px 25px rgb(2,2,2,0.1);
+}
 
 
 .tab-nav-bar
@@ -404,29 +406,3 @@ a.nav-link.nav-link-waiter.active img{
     height: 500px;
     overflow-y: scroll;
   }
-
-
-  .main-spinner-wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: #eee;
-    
-  }
-  .donut {
-    width: 4rem;
-    height: 4rem;
-    border-radius: 50%;
-    border: 0.3rem solid rgba(#979fd0, 0.3);
-    border-top-color: #979fd0;
-    animation: 1.5s spin infinite linear;
-  }
-  
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
