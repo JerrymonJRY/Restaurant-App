@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react'
 import axios from 'axios'
 import { redirect, useNavigate } from "react-router-dom";
-
+import apiConfig from '../layouts/base_url';
 function  Login() {
 
   const [email,setEmail]=useState()
@@ -12,7 +12,7 @@ function  Login() {
  
 const handleSubmit =(e) =>{
   e.preventDefault()
-  axios.post('http://localhost:5000/api/user/login',{email,password})
+  axios.post(`${apiConfig.baseURL}/api/user/login`,{email,password})
   .then(result => {
    if(result.data)
    {

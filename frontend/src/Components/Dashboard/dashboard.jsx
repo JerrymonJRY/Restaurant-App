@@ -5,13 +5,14 @@ import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
 import axios from 'axios'
 import { redirect, useNavigate,useParams } from "react-router-dom";
+import apiConfig from '../layouts/base_url';
 const Dashboard =() =>{
 
     const [suc,setSuc] =useState()
    
     useEffect(() =>{
 
-        axios.get('http://localhost:5000/api/user/dashboard')
+        axios.get(`${apiConfig.baseURL}/api/user/dashboard`)
         .then(result => {
             if(result.data)
             {
