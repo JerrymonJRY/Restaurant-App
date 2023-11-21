@@ -55,6 +55,7 @@ function App() {
     <Routes>
       {/* <Route path='/' element={<Login />} ></Route> */}
       <Route path='/' element={<Dashboard />} ></Route>
+      <Route path='/dashboard' element={<Dashboard />} ></Route>
       {/* Food Ingredient Category */}
       <Route path='/addingredientfoodcategory' element={<AddCategory/>}></Route>
       <Route path='/viewingredientfoodcategory' element={<ViewCategory />}></Route>
