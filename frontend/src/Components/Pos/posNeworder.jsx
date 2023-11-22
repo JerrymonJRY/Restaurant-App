@@ -943,7 +943,7 @@ console.info({customers})
         value={searchWaiter}
         className="form-control"
         onChange={handleSearchWaiter}
-      />
+      /> <br />
               <div className="row">
               {filteredWaiters.map((wait, index) => (
       <div key={index} className={`col-sm-3 col-md-3 ${selectWaiter === wait ? 'disabled' : ''}`}>
@@ -966,7 +966,7 @@ console.info({customers})
         value={searchTable}
         className="form-control"
         onChange={handleSearchTable}
-      />
+      /><br />
             <div className="row">
               {
                 filteredTables.map((tables, index) => (
@@ -991,7 +991,7 @@ console.info({customers})
         value={searchCustomer}
         className="form-control"
         onChange={handleSearchCustomer}
-      />
+      /><br />
             <div className="row">
               {
                 filteredCustomers.map((customer, index) => (
@@ -1016,7 +1016,7 @@ console.info({customers})
         value={searchDeliveryPerson}
         className="form-control"
         onChange={handleSearchDelivery}
-      />
+      /><br />
             <div className="row">
               {
                 filteredDelivery.map((delivery, index) => (
@@ -1042,7 +1042,7 @@ console.info({customers})
                value={searchTerm}
               onChange={handleSearch}
               className="form-control"
-              />
+              /> 
               </div>
               <ul className="nav nav-pills flex-columns shdw-lft " id="myTab" role="tablist">
                 {distinctCategories.map((category, index) => (
