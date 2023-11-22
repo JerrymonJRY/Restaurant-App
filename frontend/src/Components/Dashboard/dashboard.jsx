@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState,useEffect } from 'react'
+import { useState } from 'react'
 import Header from '../layouts/Header';
 import Sidebar from '../layouts/Sidebar';
 import Footer from '../layouts/Footer';
@@ -8,21 +8,6 @@ import { redirect, useNavigate,useParams } from "react-router-dom";
 import apiConfig from '../layouts/base_url';
 const Dashboard =() =>{
 
-    const [suc,setSuc] =useState()
-   
-    useEffect(() =>{
-
-        axios.get(`${apiConfig.baseURL}/api/user/dashboard`)
-        .then(result => {
-            if(result.data)
-            {
-                  
-            }
-
-        })
-        .catch(err =>console.log(err))
-        
-    },[])
 
     return (
         <div className="container-scroller">
