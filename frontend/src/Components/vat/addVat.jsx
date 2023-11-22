@@ -94,7 +94,7 @@ const AddVat =() =>{
                             <div className="form-group row">
                         <label for="exampleInputUsername2" className="col-sm-3 col-form-label">Vat Name</label>
                         <div className="col-sm-9">
-                          <input type="text" className="form-control" name="vatname" id="exampleInputUsername2" onChange={e =>setValues({...values, vatname: e.target.value})} placeholder="Food Description" />
+                          <input type="text" className="form-control" name="vatname" id="exampleInputUsername2" onChange={e =>setValues({...values, vatname: e.target.value})} placeholder="Vat Name" />
                           {errors.vatname && <span className="error">{errors.vatname}</span>}
                         </div>
                       </div>
@@ -102,7 +102,7 @@ const AddVat =() =>{
                       <div className="form-group row">
                         <label for="exampleInputUsername2" className="col-sm-3 col-form-label">Percentage</label>
                         <div className="col-sm-9">
-                          <input type="text" className="form-control" name="percentage" id="exampleInputUsername2" onChange={e =>setValues({...values, percentage: e.target.value})} placeholder="Food Category" />
+                          <input type="text" className="form-control" name="percentage" id="exampleInputUsername2" onChange={e =>setValues({...values, percentage: e.target.value})} placeholder="Percentage" />
                           {errors.percentage && <span className="error">{errors.percentage}</span>}
                         </div>
                       </div>

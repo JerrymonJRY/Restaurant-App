@@ -127,7 +127,7 @@ const AddWaiter =() =>{
                       <div className="form-group row">
                         <label for="exampleInputUsername2" className="col-sm-3 col-form-label">Description</label>
                         <div className="col-sm-9">
-                          <input type="text" className="form-control" name="description" id="exampleInputUsername2" onChange={e =>setValues({...values, description: e.target.value})} placeholder="Mobile Number" />
+                          <input type="text" className="form-control" name="description" id="exampleInputUsername2" onChange={e =>setValues({...values, description: e.target.value})} placeholder="Description" />
                         </div>
                       </div>
                       

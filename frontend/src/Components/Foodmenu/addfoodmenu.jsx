@@ -242,7 +242,7 @@ formData.append('bar', bar);
                       <div className="form-group row">
                         <label htmlFor="exampleInputUsername2" className="col-sm-3 col-form-label">Sales Price</label>
                         <div className="col-sm-9">
-                          <input type="text" className="form-control" value={salesprice} onChange={(e) => {setSalesPrice(e.target.value)}} name="salesprice" id="exampleInputUsername2"  placeholder="Food Menu" />
+                          <input type="text" className="form-control" value={salesprice} onChange={(e) => {setSalesPrice(e.target.value)}} name="salesprice" id="exampleInputUsername2"  placeholder="Sales Price" />
                         </div>
                       </div>
 
@@ -263,7 +263,7 @@ formData.append('bar', bar);
                       <div className="form-group row">
                         <label htmlFor="exampleInputUsername2" className="col-sm-3 col-form-label">Description</label>
                         <div className="col-sm-9">
-                          <input type="text" className="form-control" value={description} onChange={(e) => {setDescription(e.target.value)}} name="foodmenuname" id="exampleInputUsername2"  placeholder="Food Menu" />
+                          <input type="text" className="form-control" value={description} onChange={(e) => {setDescription(e.target.value)}} name="foodmenuname" id="exampleInputUsername2"  placeholder="Description" />
                         </div>
                       </div>
 

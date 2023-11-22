@@ -97,7 +97,7 @@ const AddIngredients =() =>{
                             <div className="form-group row">
                         <label for="exampleInputUsername2" className="col-sm-3 col-form-label">Food Intgredients Name</label>
                         <div className="col-sm-9">
-                          <input type="text" className="form-control" name="name" id="exampleInputUsername2" onChange={(e) => {setName(e.target.value)}} placeholder="Food Description" />
+                          <input type="text" className="form-control" name="name" id="exampleInputUsername2" onChange={(e) => {setName(e.target.value)}} placeholder="Food Intgredients Name" />
                         </div>
                       </div>
 

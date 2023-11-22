@@ -77,7 +77,7 @@ const AddFoodCategory =() =>{
                             <div className="form-group row">
                         <label for="exampleInputUsername2" className="col-sm-3 col-form-label">Food Category Name</label>
                         <div className="col-sm-9">
-                          <input type="text" className="form-control" name="foodcategoryname" id="exampleInputUsername2" onChange={e =>setValues({...values, foodcategoryname: e.target.value})} placeholder="Food Description" />
+                          <input type="text" className="form-control" name="foodcategoryname" id="exampleInputUsername2" onChange={e =>setValues({...values, foodcategoryname: e.target.value})} placeholder="" />
                           {errors.foodcategoryname && <span className="error">{errors.foodcategoryname}</span>}
                         </div>
                       </div>
@@ -85,7 +85,7 @@ const AddFoodCategory =() =>{
                       <div className="form-group row">
                         <label for="exampleInputUsername2" className="col-sm-3 col-form-label">Description</label>
                         <div className="col-sm-9">
-                          <input type="text" className="form-control" name="description" id="exampleInputUsername2" onChange={e =>setValues({...values, description: e.target.value})} placeholder="Food Category" />
+                          <input type="text" className="form-control" name="description" id="exampleInputUsername2" onChange={e =>setValues({...values, description: e.target.value})} placeholder="" />
                         </div>
                       </div>
                       
