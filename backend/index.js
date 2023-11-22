@@ -6,7 +6,7 @@ const dotenv =require('dotenv').config();
 const cors =require('cors');
 const morgan =require('morgan');
 const cookieParser =require('cookie-parser');
-
+//const bodyParser = require("body-parser");
 
 //Routes
 
@@ -28,7 +28,13 @@ const purchaseRouter =require('./routes/purchaseRoutes');
 
 const PORT =process.env.PORT || 4000;
 dbConnect();
-app.use(cors());
+app.use(cors(
+    {
+    orgin:["https://restaurant-app-frontend-ten.vercel.app"],
+    methods:["POST","GET"],
+    credentials:true
+    }
+));
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -47,9 +53,9 @@ app.use('/api/customer',customerRouter);
 app.use('/api/delivery',deliveryRouter);
 app.use('/api/supplier',supplierRouter);
 app.use('/api/purchase',purchaseRouter);
-// app.use('/',(req,res) =>{
-//     res.send("Hellow From Server Side");
-// });
+app.use('/',(req,res) =>{
+    res.send("Hellow From Server Side");
+});
 app.use(cookieParser());
 
 
