@@ -14,7 +14,8 @@ const ViewWaiter =() =>{
   const navigate = useNavigate();
   useEffect(() => {
     axios
-      .get(`${apiConfig.baseURL}/api/waiter/allwaiter`)
+      .get(`https://restaurant-app-backend-liard.vercel.app
+/api/waiter/allwaiter`)
       .then((res) => {
         setData(res.data);
 
