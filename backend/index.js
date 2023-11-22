@@ -28,13 +28,13 @@ const purchaseRouter =require('./routes/purchaseRoutes');
 
 const PORT =process.env.PORT || 4000;
 dbConnect();
-app.use(cors(
-    {
-    orgin:["https://restaurant-app-frontend-ten.vercel.app"],
-    methods:["POST","GET"],
-    credentials:true
-    }
-));
+app.use(cors());
+const corsOptions = {
+    origin: 'https://restaurant-app-frontend-ten.vercel.app',
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  }
+  
+  app.use(cors(corsOptions));
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
