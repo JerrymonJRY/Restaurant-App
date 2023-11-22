@@ -28,7 +28,7 @@ dbConnect();
 
 // Set up CORS middleware
 const corsOptions = {
-  origin: 'https://restaurant-app-frontend-ten.vercel.app',
+  origin: 'https://restaurant-burp.vercel.app',
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
