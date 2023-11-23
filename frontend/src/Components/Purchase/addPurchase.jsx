@@ -19,6 +19,7 @@ const AddPurchase =() =>
     const [paidAmount, setPaidAmount] = useState(0);
     const [selectSupplier,setSelectedSupplier] =useState(null);
     const [invoiceDate, setInvoiceDate] = useState('');
+    const navigate = useNavigate();
     useEffect(() => {
         // Fetch categories from the server
         axios.get(`${apiConfig.baseURL}/api/purchase/getSupplier`)
@@ -65,7 +66,12 @@ const AddPurchase =() =>
     
           if (existingIngredient) {
            
-            alert('This ingredient is already in the cart!');
+            Swal.fire({
+              icon: 'warning',
+              title: 'Warning',
+              text: 'This ingredient is already in the cart!',
+              confirmButtonText: 'OK'
+            });
           } else {
           
             setCart((prevCart) => [...prevCart, { ...selectedOption, quantity: 1 }]);
@@ -168,6 +174,24 @@ const AddPurchase =() =>
       };
       axios
       .post(`${apiConfig.baseURL}/api/purchase/create`, postData, config)
+      .then((res) => {
+        console.log(res);
+        Swal.fire({
+          icon: 'success',
+          title: 'Purchase Created!',
+          text: 'Your Purchase has been created successfully.',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          },
+        }).then(() => {
+          navigate('/viewPurchase');
+        });
+      })
+      .catch((err) => console.log(err));
 
     }
     return (
