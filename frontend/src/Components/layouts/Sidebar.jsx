@@ -127,19 +127,17 @@ const Sidebar =() =>{
             </div>
           </li>
    
-        {/* <li className="nav-item">
-          <a className="nav-link" href="pages/forms/basic_elements.html">
-            <span className="menu-title">Forms</span>
-            <i className="mdi mdi-format-list-bulleted menu-icon"></i>
-          </a>
-        </li>
         <li className="nav-item">
+        
+          <Link className="nav-link" to="/dashboard"> <span className="menu-title">Expense</span>  <i className="mdi mdi-format-list-bulleted menu-icon"></i></Link>
+        </li>
+       <li className="nav-item">
           <a className="nav-link" href="pages/charts/chartjs.html">
-            <span className="menu-title">Charts</span>
+            <span className="menu-title">Reports</span>
             <i className="mdi mdi-chart-bar menu-icon"></i>
           </a>
         </li>
-        <li className="nav-item">
+        {/*  <li className="nav-item">
           <a className="nav-link" href="pages/tables/basic-table.html">
             <span className="menu-title">Tables</span>
             <i className="mdi mdi-table-large menu-icon"></i>

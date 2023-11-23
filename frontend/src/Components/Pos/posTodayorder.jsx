@@ -11,9 +11,13 @@ const PosTodayOrder =() =>{
 
  
 
-   const totalGrandTotal = Array.isArray(posTodayorder)
-   ? posTodayorder.reduce((total, order) => total + order.grandTotal, 0)
-   : 0;
+    const totalGrandTotal = Array.isArray(posTodayorder)
+    ? posTodayorder.reduce((total, order) => {
+        // Ensure grandTotal is present and is a number before adding it to the total
+        const orderGrandTotal = parseFloat(order.grandTotal);
+        return !isNaN(orderGrandTotal) ? total + orderGrandTotal : total;
+      }, 0)
+    : 0;
 
 
     useEffect(() => {
