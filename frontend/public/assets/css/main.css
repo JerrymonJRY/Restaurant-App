@@ -406,3 +406,8 @@ a.nav-link.nav-link-waiter.active img{
     height: 500px;
     overflow-y: scroll;
   }
+
+  .poslogout
+  {
+    padding-top: 18px;
+  }

@@ -217,9 +217,9 @@ data.map((order) => (
                 <tr key={cartItem.foodmenuId}>
                   <td>{key + 1}</td>
                   <td>{cartItem.menuItemDetails.foodmenuname}</td>
-                 
-                  <td>{cartItem.salesprice}</td>
                   <td>{cartItem.quantity}</td>
+                  <td>{cartItem.salesprice}</td>
+                 
                   {/* Render other cart item details here */}
                 </tr>
               ))}
@@ -306,9 +306,9 @@ kotdata.map((order) => (
                 <tr key={cartItem.foodmenuId}>
                   <td>{key + 1}</td>
                   <td>{cartItem.menuItemDetails.foodmenuname}</td>
-                 
-                  <td>{cartItem.salesprice}</td>
                   <td>{cartItem.quantity}</td>
+                  <td>{cartItem.salesprice}</td>
+                
                   {/* Render other cart item details here */}
                 </tr>
               ))}
