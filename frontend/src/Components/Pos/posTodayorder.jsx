@@ -1,5 +1,5 @@
 import React from "react";
-import { useState,useEffect } from "react";
+import { useState,useEffect,useRef } from "react";
 import axios from "axios";
 import { redirect, useNavigate,Link } from "react-router-dom";
 import Swal from 'sweetalert2';
@@ -8,7 +8,10 @@ import apiConfig from '../layouts/base_url';
 const PosTodayOrder =() =>{
 
     const [posTodayorder, setPosTodayorder] = useState([]);
-
+    const [showModal, setShowModal] = useState(false);
+    const [data, setData] = useState(null);
+    const [kotdata,setkotData] =useState(null);
+    const [showkotModal,setShowKotModal] =useState(false);
  
 
     const totalGrandTotal = Array.isArray(posTodayorder)
@@ -19,6 +22,13 @@ const PosTodayOrder =() =>{
       }, 0)
     : 0;
 
+    const componentRef = useRef();
+    
+    const handlePrint = () => {
+      if (componentRef.current) {
+        componentRef.current.handlePrint();
+      }
+    };
 
     useEffect(() => {
         fetch(`${apiConfig.baseURL}/api/pos/gettodayOrder`)
@@ -26,6 +36,39 @@ const PosTodayOrder =() =>{
           .then((data) => setPosTodayorder(data))
           .catch((error) => console.error(error));
       }, []);
+
+      const handleComplete =(id) =>{
+        console.log(id);
+        axios.get(`${apiConfig.baseURL}/api/pos/getcomplete/${id}`)
+        .then((response) => {
+            setData(response.data);
+            console.log(response.data);
+            setShowModal(true);
+          })
+          .catch((error) => {
+            console.error('Error fetching data:', error);
+          });
+
+
+
+    }
+
+    const handlekot =(id) =>
+{
+
+  const url = `${apiConfig.baseURL}/api/pos/getKot/${id}`;
+  axios.get(url)
+  .then((response) => {
+    setkotData(response.data);
+    console.log(response.data);
+    setShowKotModal(true);
+  })
+  
+  .catch((error) => {
+    console.error('Error fetching data:', error);
+  });
+
+}
 
 
     return (
@@ -59,12 +102,12 @@ const PosTodayOrder =() =>{
       <td>{order.grandTotal}</td>
 
       <td>
-        <Link to={`/posorderdetails/${order._id}`} className="btn btn-primary" data-toggle="tooltip" data-placement="right" title="Print">
+        <a onClick={(e) => handleComplete(order._id)} className="btn btn-primary" data-toggle="tooltip" data-placement="right" title="Print">
         <i className="mdi mdi-cloud-print-outline"></i>
-        </Link>
-        <button onClick={(e) => handleDelete(order._id)} className="btn btn-danger" data-toggle="tooltip" data-placement="right" title="Kitchen Order">
+        </a>
+        <a onClick={(e) => handlekot(order._id)} className="btn btn-danger" data-toggle="tooltip" data-placement="right" title="Kitchen Order">
           <i className="mdi mdi-food-variant"></i>
-        </button>
+        </a>
       </td>
     </tr>
   ))
@@ -84,6 +127,148 @@ const PosTodayOrder =() =>{
       </tfoot>
                 </table>
             </div>
+            <div>
+ <div className={`modal ${showModal ? 'show' : ''}`} tabIndex="-1" role="dialog" style={{ display: showModal ? 'block' : 'none' }}>
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Order Details</h5>
+              <button type="button" className="close" onClick={() => setShowModal(false)}>
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              {/* Display the data here */}
+              
+              { data ? (
+data.map((order) => (
+               <div key={order.id}>
+               <h5>Order Number: {order.ordernumber}</h5>
+               <h6>Options: {order.options}</h6>
+               <h6>Customer Name:{order.customerDetails ? order.customerDetails.customername : 'N/A'}</h6>
+      <h6>Table:{order.tableDetails ? order.tableDetails.tablename : 'N/A'}</h6>
+      <h6>Waiter {order.waiterDetails ? order.waiterDetails.waitername : 'N/A'}</h6>
+                <table className="table   table-bordered">
+                <thead>
+                <tr>
+                    <th>Si No</th>
+                    <th>Food Name</th>
+                    <th>Quanity</th>
+                    <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                 
+                  {order.cart.map((cartItem,key) => (
+                <tr key={cartItem.foodmenuId}>
+                  <td>{key + 1}</td>
+                  <td>{cartItem.menuItemDetails.foodmenuname}</td>
+                  <td>{cartItem.quantity}</td>
+                  <td>{cartItem.salesprice}</td>
+                 
+                  {/* Render other cart item details here */}
+                </tr>
+              ))}
+                
+                </tbody>
+                </table>
+                <h6>Total :{order.total}</h6>
+                <h6>Vat Amount :{order.vatAmount}</h6>
+                <h6>Grand Total :{order.grandTotal}</h6>
+
+
+                <div className="modal-footer">
+             
+              <button type="button" className="btn btn-outline-secondary" onClick={() => setShowModal(false)}>Close</button>
+            </div>
+   
+             </div>
+           
+              ))
+              ):(
+                <p>No data</p>
+              )
+            }
+            </div>
+         
+          </div>
+        </div>
+      </div>
+      <div className={`modal-backdrop ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }}></div>
+    </div>
+    <div>
+  
+  <div className={`modal ${showkotModal ? 'show' : ''}`} tabIndex="-1" role="dialog" style={{ display: showkotModal ? 'block' : 'none' }}>
+         <div className="modal-dialog" role="document">
+           <div className="modal-content">
+             <div className="modal-header">
+               <h5 className="modal-title">KOT</h5>
+               <button type="button" className="close" onClick={() => setShowModal(false)}>
+                 <span aria-hidden="true">&times;</span>
+               </button>
+             </div>
+             <div className="modal-body">
+               {/* Display the data here */}
+               
+               { kotdata ? (
+ kotdata.map((order) => (
+                <div key={order.id}>
+                <h5>Order Number: {order.ordernumber}</h5>
+                <h6>Options: {order.options}</h6>
+                <h6>Customer Name:{order.customerDetails ? order.customerDetails.customername : 'N/A'}</h6>
+       <h6>Table:{order.tableDetails ? order.tableDetails.tablename : 'N/A'}</h6>
+       <h6>Waiter {order.waiterDetails ? order.waiterDetails.waitername : 'N/A'}</h6>
+                 <table className="table   table-bordered">
+                 <thead>
+                 <tr>
+                     <th>Si No</th>
+                     <th>Food Name</th>
+                     <th>Quanity</th>
+                     <th>Price</th>
+                     </tr>
+                 </thead>
+                 <tbody>
+                  
+                   {order.cart.map((cartItem,key) => (
+                 <tr key={cartItem.foodmenuId}>
+                   <td>{key + 1}</td>
+                   <td>{cartItem.menuItemDetails.foodmenuname}</td>
+                   <td>{cartItem.quantity}</td>
+                   <td>{cartItem.salesprice}</td>
+                 
+                   {/* Render other cart item details here */}
+                 </tr>
+               ))}
+                 
+                 </tbody>
+                 </table>
+                 <h6 className="text-right">Total :{order.total}</h6>
+                 <h6 className="text-right">Vat Amount :{order.vatAmount}</h6>
+                 <h6 className="text-right">Grand Total :{order.grandTotal}</h6>
+ 
+            
+ 
+                 <div className="modal-footer">
+                 <button type="button" onClick={handlePrint}  className="btn btn-outline-primary" >Print</button> 
+               <button type="button" className="btn btn-outline-secondary" onClick={() => setShowKotModal(false)}>Close</button>
+             </div>
+    
+              </div>
+            
+               ))
+               ):(
+                 <p>No data</p>
+               )
+             }
+             </div>
+          
+           </div>
+         </div>
+       </div>
+       <div className={`modal-backdrop ${showkotModal ? 'show' : ''}`} style={{ display: showkotModal ? 'block' : 'none' }}></div>
+       
+       
+     </div>
         </div>
     )
 
