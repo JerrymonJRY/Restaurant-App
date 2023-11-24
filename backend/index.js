@@ -22,6 +22,7 @@ const customerRouter = require('./routes/customerRoutes');
 const deliveryRouter = require('./routes/deliveryRoutes');
 const supplierRouter = require('./routes/supplierRoutes');
 const purchaseRouter = require('./routes/purchaseRoutes');
+const reportsRouter =require('./routes/reportRoutes');
 
 const PORT = process.env.PORT || 4000;
 dbConnect();
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
 });
 
 app.use(cors({ origin: 'https://playful-ganache-ed615b.netlify.app' }));
+//app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -56,10 +58,11 @@ app.use('/api/customer', customerRouter);
 app.use('/api/delivery', deliveryRouter);
 app.use('/api/supplier', supplierRouter);
 app.use('/api/purchase', purchaseRouter);
+app.use('/api/reports',reportsRouter);
 
-app.use('/', (req, res) => {
-  res.send('Hello From Server Side');
-});
+// app.use('/', (req, res) => {
+//   res.send('Hello From Server Side');
+// });
 
 app.listen(PORT, () => {
   console.log(`Server is running at PORT ${PORT}`);

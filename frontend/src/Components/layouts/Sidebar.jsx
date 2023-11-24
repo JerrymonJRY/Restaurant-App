@@ -131,12 +131,21 @@ const Sidebar =() =>{
         
           <Link className="nav-link" to="/dashboard"> <span className="menu-title">Expense</span>  <i className="mdi mdi-format-list-bulleted menu-icon"></i></Link>
         </li>
-       <li className="nav-item">
-          <a className="nav-link" href="pages/charts/chartjs.html">
-            <span className="menu-title">Reports</span>
-            <i className="mdi mdi-chart-bar menu-icon"></i>
-          </a>
-        </li>
+        <li className="nav-item">
+            <a className="nav-link" data-bs-toggle="collapse" href="#general-reports" aria-expanded="false" aria-controls="general-inventory">
+              <span className="menu-title">Reports</span>
+              <i className="menu-arrow"></i>
+              <i className="mdi mdi-medical-bag menu-icon"></i>
+            </a>
+            <div className="collapse" id="general-reports">
+              <ul className="nav flex-column sub-menu">
+              <li className="nav-item"> <Link className="nav-link" to="/dailveryReport"> Delivery Report</Link></li>
+              <li className="nav-item"> <Link className="nav-link" to="/customerReport"> Customer Report</Link></li>
+              <li className="nav-item"> <Link className="nav-link" to="/waiterReport"> Waiter Report</Link> </li>
+              
+              </ul>
+            </div>
+          </li>
         {/*  <li className="nav-item">
           <a className="nav-link" href="pages/tables/basic-table.html">
             <span className="menu-title">Tables</span>

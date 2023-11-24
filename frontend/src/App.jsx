@@ -45,6 +45,9 @@ import Spinner from './Components/layouts/Spinner';
 import ViewPurchase from './Components/Purchase/viewPurchase';
 import AddPurchase from './Components/Purchase/addPurchase';
 import EditPurchase from './Components/Purchase/editPurchase';
+import DeliveryReport from './Components/Report/deliveryReport';
+import CustomerReport from './Components/Report/customerReport';
+import WaiterReport from './Components/Report/waiterReport';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -110,6 +113,12 @@ function App() {
       <Route path='/viewPurchase' element={<ViewPurchase />}></Route>
       <Route path='/addPurchase' element={<AddPurchase />}></Route>
       <Route path='/editPurchase/:id' element={<EditPurchase />}></Route>
+
+      {/* Reports */}
+      <Route path='/dailveryReport' element={<DeliveryReport />}></Route>
+      <Route path='/customerReport' element={<CustomerReport />}></Route>
+      <Route path='/waiterReport' element={<WaiterReport />}></Route>
+
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   </BrowserRouter>

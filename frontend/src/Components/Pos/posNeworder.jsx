@@ -42,6 +42,7 @@ const PosNewOrder = () => {
   const [selectCustomer, setSelectCustomer] = useState();
   const [placeorder, setPlaceOrder] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
+  const [refresh, setRefresh] = useState(false);
 
   const [searchWaiter, setSearchWaiter] = useState('');
   const [searchTable, setSearchTable] =useState('');
@@ -438,7 +439,8 @@ console.info({customers})
               console.log(posData);
               openPrintModal(res.data);
             } else {
-              navigate('/posorder');
+              // navigate('/posorder');
+              setRefresh((prevRefresh) => !prevRefresh);
             }
           });
         })
@@ -491,7 +493,7 @@ console.info({customers})
      
       if (result.isConfirmed) {
         // Refresh the page
-        navigate('/posorder');
+        setRefresh((prevRefresh) => !prevRefresh);
       }
     });
   }
@@ -647,7 +649,7 @@ console.info({customers})
               console.log(res);
               openPrintModal(res.data);
             } else {
-              navigate('/posorder');
+              setRefresh((prevRefresh) => !prevRefresh);
             }
           });
         })
@@ -759,7 +761,7 @@ console.info({customers})
               console.log(res);
               openPrintModal(res.data);
             } else {
-              navigate('/posorder');
+              setRefresh((prevRefresh) => !prevRefresh);
             }
           });
         })
@@ -890,7 +892,7 @@ console.info({customers})
                   setShowFoodMenuTab(false)
                   setShowDeliveryTab(false)
                 }}
-                data-toggle="tab" href="#waiter" role="tab" aria-controls="kiwi2" aria-selected="false">Waiter</a>
+                data-toggle="tab" href="#waiter" role="tab" aria-controls="kiwi2" aria-selected="false">Select Waiter</a>
             </li>
 
             {

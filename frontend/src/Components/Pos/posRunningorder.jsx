@@ -15,6 +15,7 @@ const PosRunningOrder = ()=>{
     const [showkotModal,setShowKotModal] =useState(false);
     const [payments,setPays] =useState();
  const [searchTerm, setSearchTerm] = useState('');
+   const [refresh, setRefresh] = useState(false);
     const handlePays = (event) => {
       setPays(event.target.value);
       
@@ -35,7 +36,7 @@ const PosRunningOrder = ()=>{
         .then((response) => response.json())
         .then((data) => setPosRunningorder(data))
         .catch((error) => console.error(error));
-    }, []);
+    }, [refresh]);
 
     const filteredOrders = posRunningorder.filter((order) => {
       const searchTermLower = searchTerm.toLowerCase();
@@ -98,7 +99,7 @@ const handleMakePayment =(id) =>
       if (result.isConfirmed) {
         // Open your print modal here
         console.log(res);
-        location.reload();
+      setRefresh((prevRefresh) => !prevRefresh);
        // openPrintModal(res.data);
       } else {
         navigate('/posorder');
