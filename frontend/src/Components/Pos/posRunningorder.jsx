@@ -24,13 +24,15 @@ const PosRunningOrder = ()=>{
 
 
       const componentRef = useRef();
+
+      const kotModalRef = useRef();
     
       const handlePrint = () => {
-        if (componentRef.current) {
-          componentRef.current.handlePrint();
+        if (kotModalRef.current) {
+          // Use ReactToPrint to handle the print action for the KOT modal
+          kotModalRef.current.handlePrint();
         }
-      };
-    
+      }
     useEffect(() => {
       fetch(`${apiConfig.baseURL}/api/pos/getrunningorder`)
         .then((response) => response.json())
@@ -272,7 +274,7 @@ data.map((order) => (
         trigger={() => <button onClick={handlePrint}>Print</button>}
         content={() => componentRef.current}
       /> */}
- <div className={`modal ${showkotModal ? 'show' : ''}`} tabIndex="-1" role="dialog" style={{ display: showkotModal ? 'block' : 'none' }}>
+ <div className={`modal ${showkotModal ? 'show' : ''}`} tabIndex="-1" role="dialog" style={{ display: showkotModal ? 'block' : 'none' }} ref={kotModalRef}>
         <div className="modal-dialog" role="document">
           <div className="modal-content">
             <div className="modal-header">
@@ -323,7 +325,12 @@ kotdata.map((order) => (
            
 
                 <div className="modal-footer">
-                <button type="button" onClick={handlePrint}  className="btn btn-outline-primary" >Print</button> 
+                {/* <button type="button" onClick={handlePrint}  className="btn btn-outline-primary" >Print</button>  */}
+            <ReactToPrint
+        trigger={() => <button onClick={handlePrint}>Print KOT</button>}
+        content={() => kotModalRef.current}
+      />
+            
               <button type="button" className="btn btn-outline-secondary" onClick={() => setShowKotModal(false)}>Close</button>
             </div>
    

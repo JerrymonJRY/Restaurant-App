@@ -1,14 +1,28 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import axios from "axios";
 import { redirect, useNavigate, Link } from "react-router-dom";
 import Swal from 'sweetalert2';
 import apiConfig from '../layouts/base_url';
+import { FaShoppingCart, FaHistory, FaPause,FaRegCalendarAlt    } from 'react-icons/fa';
+import { TbToolsKitchen3 } from "react-icons/tb";
+import { BsFillPauseCircleFill } from "react-icons/bs";
+import { FaHandHoldingDroplet } from "react-icons/fa6";
+import { RiArchiveDrawerLine } from "react-icons/ri";
+import { LiaFileInvoiceSolid } from "react-icons/lia";
+import ReactToPrint   from "react-to-print";
 
 const PosNewOrder = () => {
 
-
+  const kotModalRef = useRef();
+    
+  const handlePrint = () => {
+    if (kotModalRef.current) {
+      // Use ReactToPrint to handle the print action for the KOT modal
+      kotModalRef.current.handlePrint();
+    }
+  }
   const navigate = useNavigate();
   const [tabEnabled, setTabEnabled] = useState({
     dineIn: false,
@@ -52,6 +66,13 @@ const PosNewOrder = () => {
   const [showTable, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [posRunningorder, setPosRunningorder] = useState([]);
+  const [posHoldingorder, setPosHoldingorder] = useState([]);
+  const [isModalHold, setModalHold] = useState(false);
+
+  const [kotdata,setkotData] =useState(null);
+  const [showkotModal,setShowKotModal] =useState(false);
 const handleSearch = (e) => {
   setSearchTerm(e.target.value);
 };
@@ -448,39 +469,7 @@ console.info({customers})
     }
   };
 
-  // function openPrintModal(orderData) {
-  //   $('#print-modal').modal('show');
 
-    
-  //   const modalBody = document.getElementById('modal-body');
-  
-   
-  //   const table = document.createElement('table');
-  //   table.classList.add('table'); 
-
-  
- 
-  //   const tableBody = document.createElement('tbody');
-
-    
-   
-    
-  //   for (const key in orderData) {
-  //     if (Object.hasOwnProperty.call(orderData, key)) {
-  //       const row = tableBody.insertRow();
-  //       const cell1 = row.insertCell(0);
-  //       const cell2 = row.insertCell(1);
-  //       cell1.textContent = key;
-  //       cell2.textContent = orderData[key];
-  //     }
-  //   }
-  
-   
-  //   table.appendChild(tableBody);
-  
-  
-  //   modalBody.appendChild(table);
-  // }
 
   function openPrintModal(data) {
     // Create a modal dialog or use a library like Swal
@@ -494,9 +483,14 @@ console.info({customers})
       if (result.isConfirmed) {
         // Refresh the page
         setRefresh((prevRefresh) => !prevRefresh);
+      // navigate.push("/pos/runningorder");
       }
     });
   }
+
+  useEffect(() => {
+   
+  }, [refresh]);
 
   function getFormattedOrderDetails(data) {
     // Create an HTML structure to display the order details
@@ -772,7 +766,9 @@ console.info({customers})
 
 
 
-
+const handleTabClick =() =>{
+  setModalOpen(true);
+}
  
   
   
@@ -784,22 +780,84 @@ console.info({customers})
     setShowModal(false);
   };
 
+    const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleCloseHold =() =>{
+    setModalHold(false);
+  }
+
+  const handleHoldClick =() =>
+  {
+    setModalHold(true);
+  }
+
+  useEffect(() => {
+    fetch(`${apiConfig.baseURL}/api/pos/getrunningorder`)
+      .then((response) => response.json())
+      .then((data) => setPosRunningorder(data))
+      .catch((error) => console.error(error));
+  }, [])
+
+  const filteredOrders = posRunningorder.filter((order) => {
+    const searchTermLower = searchTerm.toLowerCase();
+    const orderNumberIncludes = order.ordernumber.toLowerCase().includes(searchTermLower);
+    const tableNameIncludes = order.table && order.table.tablename.toLowerCase().includes(searchTermLower);
+    const waiterNameIncludes = order.waiter.waitername.toLowerCase().includes(searchTermLower);
+  
+    return orderNumberIncludes || (tableNameIncludes && waiterNameIncludes);
+  });
+
+  useEffect(() => {
+    fetch(`${apiConfig.baseURL}/api/pos/gethold`)
+      .then((response) => response.json())
+      .then((data) => setPosHoldingorder(data))
+      .catch((error) => console.error(error));
+  }, []);
+
+  const filteredOrdershold = posHoldingorder.filter((order) => {
+    const searchTermLower = searchTerm.toLowerCase();
+    const orderNumberIncludes = order.ordernumber.toLowerCase().includes(searchTermLower);
+    const tableNameIncludes = order.table && order.table.tablename.toLowerCase().includes(searchTermLower);
+    const waiterNameIncludes = order.waiter.waitername.toLowerCase().includes(searchTermLower);
+  
+    return orderNumberIncludes || (tableNameIncludes && waiterNameIncludes);
+  });
+
+  const handlekot =(id) =>
+  {
+  
+  
+    axios.get(`${apiConfig.baseURL}/api/pos/getKot/${id}`)
+    .then((response) => {
+      setkotData(response.data);
+      console.log(response.data);
+      setShowKotModal(true);
+    })
+    .catch((error) => {
+      console.error('Error fetching data:', error);
+    });
+  
+  }
+
+
   console.info({ placeorder })
   return (
     <div className="row">
-      <div className="col-sm-5 col-lg-4">
+      <div className="col-sm-4 col-lg-auto">
         <div className="wraper shdw">
 
           <div className="table-responsive vh-70" style={{ height: "300px", overflowY: "scroll" }}>
             <table className="table ">
               <thead>
                 <tr className="thead-light">
-                  <th scope="col">No.</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">U.Price</th>
-                  <th scope="col">Qty</th>
+                  <th >No.</th>
+                  <th>Name</th>
+                  <th >U.Price</th>
+                  <th >Qty</th>
 
-                  <th scope="col">Total</th>
+                  {/* <th scope="col">Total</th> */}
                   <th>Action</th>
                 </tr>
               </thead>
@@ -811,7 +869,7 @@ console.info({customers})
                   <td>{cartProduct.salesprice}</td>
                   <td><button className='btn btn-danger btn-sm cartminus' onClick={() => handleDecrement(cartProduct)}>-</button><input type="text" style={{ width: '20px' }} value={cartProduct.quantity} /><button className='btn btn-success btn-sm cartplus' onClick={() => handleIncrement(cartProduct)}>+</button></td>
 
-                  <td>{cartProduct.totalAmount}</td>
+                  {/* <td>{cartProduct.totalAmount}</td> */}
                   <td>
                     <button className='btn btn-danger btn-sm' onClick={() => removeProduct(cartProduct)}>x</button>
                   </td>
@@ -846,16 +904,7 @@ console.info({customers})
               <tr>
                 <td>
 
-                  {/* <div className="custom-control custom-radio custom-control-inline">
-                    <input type="radio" className="custom-control-input" id="defaultInline1" name="inlineDefaultRadiosExample" />
-                    <label className="custom-control-label" htmlFor="defaultInline1">Cash</label>
-                  </div> */}
-
-
-                  {/* <div className="custom-control custom-radio custom-control-inline">
-                    <input type="radio" className="custom-control-input" id="defaultInline2" name="inlineDefaultRadiosExample" />
-                    <label className="custom-control-label" htmlFor="defaultInline2">Card</label>
-                  </div> */}
+                 
                 </td>
                 <th ></th>
               </tr>
@@ -870,7 +919,48 @@ console.info({customers})
           </div>
         </div>
       </div>
-      <div className="col-sm-7 col-lg-8">
+      <div className="col-lg-auto">
+      <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+  <a class="nav-link active text-center navleft" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">
+  <FaHistory className="mr-2" /><br /> Clear
+  </a>
+  <a
+        className="nav-link text-center navleft"
+        id="v-pills-profile-tab"
+        data-toggle="pill"
+        href="#v-pills-profile"
+        role="tab"
+        aria-controls="v-pills-profile"
+        aria-selected="false"
+        onClick={handleTabClick}
+      >
+        <TbToolsKitchen3 className="mr-2" /><br /> KOT
+      </a>
+
+  <a
+   className="nav-link text-center navleft"
+   id="v-pills-messages-tab"
+   data-toggle="pill"
+   href="#v-pills-messages"
+   role="tab"
+   aria-controls="v-pills-messages"
+   aria-selected="false"
+   onClick={handleHoldClick} >
+  <BsFillPauseCircleFill className="mr-2" /><br /> Holding Order
+  </a>
+  <a class="nav-link text-center navleft" id="v-pills-cash-drop-tab" data-toggle="pill" href="#v-pills-cash-drop" role="tab" aria-controls="v-pills-cash-drop" aria-selected="false">
+  <FaHandHoldingDroplet className="mr-2" /> <br /> Cash Drop/Out
+  </a>
+  <a class="nav-link text-center navleft" id="v-pills-drawer-tab" data-toggle="pill" href="#v-pills-drawer" role="tab" aria-controls="v-pills-drawer" aria-selected="false">
+  <RiArchiveDrawerLine className="mr-2" /><br />
+ Open Drawer
+  </a>
+  <a class="nav-link text-center navleft" id="v-pills-invoice-tab" data-toggle="pill" href="#v-pills-invoice" role="tab" aria-controls="v-pills-invoice" aria-selected="false">
+  <LiaFileInvoiceSolid className="mr-2" /><br /> Invoice Report
+  </a>
+</div>
+      </div>
+      <div className="col-sm-7 col-lg-7">
         <div className="tbl-h">
           <ul className="nav nav-tabs nav-justified" role="tablist">
             <li className="nav-item ">
@@ -1112,6 +1202,219 @@ console.info({customers})
     </div>
   </div>
 </div>
+{/* KOTMODAl */}
+<div>
+        <div className={`modal ${isModalOpen ? 'show' : ''}`} tabIndex="-1" role="dialog" style={{ display: isModalOpen ? 'block' : 'none' }}>
+        <div className="modal-dialog modal-lg" role="document"  style={{ maxWidth: '1200px' }}>
+                 <div className="modal-content">
+                   <div className="modal-header">
+                     <h5 className="modal-title">Kot Details</h5>
+                     <button type="button" className="close" onClick={handleCloseModal}>
+                <span>&times;</span>
+              </button>
+                   </div>
+                   <div className="modal-body">
+                   <div className="row">
+
+<div className="col-md-12">
+ <div className="form-group">
+ <input
+   type="text"
+   placeholder="Search by OrderID"
+   value={searchTerm}
+   onChange={handleSearch}
+   className="form-control"
+ />
+ </div>
+</div>
+ 
+
+ {
+         filteredOrders.map((order) => (
+     <div className="col-md-3">
+         <div className="menu-boxs">
+         <div className="menu-div">
+           <h5 className="text-center">OrderID:<span>{order.ordernumber}</span></h5>
+        
+           <h6 className="text-center">Table:{order.table  ?order.table.tablename :'No Table'}</h6>
+           <h6 className="text-center">Table:{order.waiter.waitername}</h6>
+           <h6 className="text-center">Runningorder</h6>
+
+           <div class="row">
+ 
+  <div className="d-inline mx-auto ">
+
+  <a class="btn btn-outline-primary" onClick={(e) => handlekot(order._id)} href="#">Print</a>
+   
+
+  </div>
+</div>
+         </div>
+         </div>
+     </div>
+
+))
+}
+ 
+ </div>
+                     
+       
+                   </div>
+                
+                 </div>
+               </div>
+             </div>
+             <div className={`modal-backdrop ${isModalOpen ? 'show' : ''}`} style={{ display: isModalOpen ? 'block' : 'none' }}></div>
+           </div>
+
+
+{/* Holding Order */}
+
+<div>
+        <div className={`modal ${isModalHold ? 'show' : ''}`} tabIndex="-1" role="dialog" style={{ display: isModalHold ? 'block' : 'none' }}>
+        <div className="modal-dialog modal-lg" role="document"  style={{ maxWidth: '1200px' }}>
+                 <div className="modal-content">
+                   <div className="modal-header">
+                     <h5 className="modal-title">Holding Order</h5>
+                     <button type="button" className="close" onClick={handleCloseHold}>
+                <span>&times;</span>
+              </button>
+                   </div>
+                   <div className="modal-body">
+                   <div className="row">
+
+                <div className="col-md-12">
+                  <div className="form-group">
+                  <input
+                   type="text"
+                   placeholder="Search by OrderID"
+                   value={searchTerm}
+                     onChange={handleSearch}
+                    className="form-control"
+        />
+                  </div>
+                </div>
+
+
+        {
+                filteredOrdershold.map((order) => (
+            <div className="col-md-3">
+                  <div className="menu-boxs">
+                <div className="menu-div">
+                  <h5 className="text-center">OrderID:<span>{order.ordernumber}</span></h5>
+               
+                  <h6 className="text-center">Table:{order.table  ?order.table.tablename :'No Table'}</h6>
+                  <h6 className="text-center">Table:{order.waiter.waitername}</h6>
+                  <h6 className="text-center">Runningorder</h6>
+
+                  <div class="row">
+        
+         <div className="d-inline mx-auto">
+
+            
+             <a class="btn btn-outline-primary" onClick={(e) => handlekot(order._id)} href="#">KOT</a>
+             <a class="btn btn-outline-primary" href="#">Edit</a>
+   
+         </div>
+    </div>
+                </div>
+                </div>
+            </div>
+
+))
+}
+        
+        </div>
+                     
+       
+                   </div>
+                
+                 </div>
+               </div>
+             </div>
+             <div className={`modal-backdrop ${isModalHold ? 'show' : ''}`} style={{ display: isModalHold ? 'block' : 'none' }}></div>
+           </div>
+
+           {/* Showkotmpdal */}
+           
+         {/* Setkot Table */}
+    <div>
+ <div className={`modal ${showkotModal ? 'show' : ''}`} tabIndex="-1" role="dialog" style={{ display: showkotModal ? 'block' : 'none' }}>
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">KOT</h5>
+              <button type="button" className="close" onClick={() => setShowModal(false)}>
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              {/* Display the data here */}
+              
+              { kotdata ? (
+kotdata.map((order) => (
+               <div key={order.id}>
+               <h5>Order Number: {order.ordernumber}</h5>
+               <h6>Options: {order.options}</h6>
+               <h6>Customer Name:{order.customerDetails ? order.customerDetails.customername : 'N/A'}</h6>
+      <h6>Table:{order.tableDetails ? order.tableDetails.tablename : 'N/A'}</h6>
+      <h6>Waiter {order.waiterDetails ? order.waiterDetails.waitername : 'N/A'}</h6>
+                <table className="table   table-bordered">
+                <thead>
+                <tr>
+                    <th>Si No</th>
+                    <th>Food Name</th>
+                    <th>Quanity</th>
+                    <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                 
+                  {order.cart.map((cartItem,key) => (
+                <tr key={cartItem.foodmenuId}>
+                  <td>{key + 1}</td>
+                  <td>{cartItem.menuItemDetails.foodmenuname}</td>
+                  <td>{cartItem.quantity}</td>
+                  <td>{cartItem.salesprice}</td>
+                
+                  {/* Render other cart item details here */}
+                </tr>
+              ))}
+                
+                </tbody>
+                </table>
+                <h6 className="text-right">Total :{order.total}</h6>
+                <h6 className="text-right">Vat Amount :{order.vatAmount}</h6>
+                <h6 className="text-right">Grand Total :{order.grandTotal}</h6>
+
+           
+
+          
+   
+             </div>
+           
+              ))
+              ):(
+                <p>No data</p>
+              )
+            }
+            </div>
+
+            <div class="modal-footer">
+            <ReactToPrint
+  trigger={() => (
+    <button className="btn btn-outline-primary">Print</button>
+  )}
+  content={() => componentRef.current}
+/>
+              <button type="button" className="btn btn-outline-secondary" onClick={() => setShowKotModal(false)}>Close</button>
+      </div>
+         
+          </div>
+        </div>
+      </div>
+      <div className={`modal-backdrop ${showkotModal ? 'show' : ''}`} style={{ display: showkotModal ? 'block' : 'none' }}></div>
+    </div>
     </div>
   )
 

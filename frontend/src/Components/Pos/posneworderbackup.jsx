@@ -6,6 +6,7 @@ import { redirect, useNavigate, Link } from "react-router-dom";
 import Swal from 'sweetalert2';
 import apiConfig from '../layouts/base_url';
 
+
 const PosNewOrder = () => {
 
 
@@ -22,6 +23,8 @@ const PosNewOrder = () => {
   //Value Declare
   const [waiter, setWaiter] = useState([]);
   const [selectWaiter, setSelectWaiter] = useState();
+  const [delivery ,setDelivery] =useState([]);
+  const [selectDelivery,setSelectDelivery] =useState();
   const [table, setTable] = useState([]);
   const [selectTable, setSelectTable] = useState();
   const [foodCategory, setFoodcategory] = useState([]);
@@ -34,11 +37,18 @@ const PosNewOrder = () => {
   const [grandTotal, setGrandTotal] = useState(0);
   const [options, setOptions] = useState('');
   const [showCustomerTab, setShowCustomerTab] = useState(false);
+  const [showDeliveryTab, setShowDeliveryTab] = useState(false);
   const [showFoodMenuTab, setShowFoodMenuTab] = useState(false);
   const [customers, setCustomers] = useState([]);
   const [selectCustomer, setSelectCustomer] = useState();
   const [placeorder, setPlaceOrder] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
+  const [refresh, setRefresh] = useState(false);
+
+  const [searchWaiter, setSearchWaiter] = useState('');
+  const [searchTable, setSearchTable] =useState('');
+  const [searchCustomer,setSearchCustomer] =useState('');
+  const [searchDeliveryPerson,setSearchDeliveryPerson] =useState('');
 
   const [showTable, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,6 +56,39 @@ const PosNewOrder = () => {
 const handleSearch = (e) => {
   setSearchTerm(e.target.value);
 };
+
+const handleSearchWaiter =(e) =>{
+  setSearchWaiter(e.target.value);
+}
+const filteredWaiters = waiter.filter((wait) =>
+  wait.waitername.toLowerCase().includes(searchWaiter.toLowerCase())
+);
+const handleSearchTable =(e) =>
+{
+  setSearchTable(e.target.value);
+}
+
+const filteredTables = table.filter((tables) =>
+tables.tablename.toLowerCase().includes(searchTable.toLowerCase())
+);
+
+const handleSearchCustomer =(e) =>
+{
+  setSearchCustomer(e.target.value);
+}
+
+const filteredCustomers = customers.filter((customer) =>
+customer.customername.toLowerCase().includes(searchCustomer.toLowerCase())
+);
+
+const handleSearchDelivery =(e) =>
+{
+  setSearchDeliveryPerson(e.target.value);
+}
+
+const filteredDelivery = delivery.filter((delivery) =>
+delivery.dliveryname.toLowerCase().includes(searchDeliveryPerson.toLowerCase())
+);
 
 console.info({table})
   const handleDinein = (e) => {
@@ -62,18 +105,7 @@ console.info({table})
 
   const handleWaiter = (details) => {
 
-    // setEnableDinein(true);
-    // setSelectWaiter(e.target.value);
-    // if(selectWaiter)
-    // {
-    //     setTabEnabled(false);
-    //      if (!isTabEnabled) {
-    //      handleDinein();
-    //      }
-    // }
-    // else{
 
-    // }
     setSelectWaiter(details);
     setTabEnabled({
       dineIn: true,
@@ -109,15 +141,22 @@ console.info({table})
     })
     setOptions("Delivery")
     setShowCustomerTab(true);
+    setShowDeliveryTab(true);
   }
 
   const handleCustomer = (e) => {
-
+    setShowDeliveryTab(false);
   }
 
   const handleMenu = (e) => {
 
   }
+
+  const handleDeliveryPerson =(e) =>{
+    setShowCustomerTab(false);
+  }
+
+
 
 
 console.info({customers})
@@ -127,6 +166,17 @@ console.info({customers})
     axios.get(`${apiConfig.baseURL}/api/pos/posWaiter`)
       .then((response) => {
         setWaiter(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+  useEffect(() => {
+
+    axios.get(`${apiConfig.baseURL}/api/pos/posDelivery`)
+      .then((response) => {
+        setDelivery(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -315,7 +365,8 @@ console.info({customers})
         cart: cart,
         total: totalAmount,
         vat: vatAmount,
-        grandTotal: grandTotal 
+        grandTotal: grandTotal,
+        delivery:selectDelivery, 
       })
 
       var posData = new FormData();
@@ -323,6 +374,10 @@ console.info({customers})
      if (selectCustomer && selectCustomer._id) {
       posData.append("customers", selectCustomer._id);
   }
+
+  if (selectDelivery && selectDelivery._id) {
+    posData.append("delivery", selectDelivery._id);
+}
       posData.append("options",options);
       posData.append("grandTotal",grandTotal);
  
@@ -385,7 +440,8 @@ console.info({customers})
               console.log(posData);
               openPrintModal(res.data);
             } else {
-              navigate('/posorder');
+              // navigate('/posorder');
+              setRefresh((prevRefresh) => !prevRefresh);
             }
           });
         })
@@ -393,39 +449,7 @@ console.info({customers})
     }
   };
 
-  // function openPrintModal(orderData) {
-  //   $('#print-modal').modal('show');
 
-    
-  //   const modalBody = document.getElementById('modal-body');
-  
-   
-  //   const table = document.createElement('table');
-  //   table.classList.add('table'); 
-
-  
- 
-  //   const tableBody = document.createElement('tbody');
-
-    
-   
-    
-  //   for (const key in orderData) {
-  //     if (Object.hasOwnProperty.call(orderData, key)) {
-  //       const row = tableBody.insertRow();
-  //       const cell1 = row.insertCell(0);
-  //       const cell2 = row.insertCell(1);
-  //       cell1.textContent = key;
-  //       cell2.textContent = orderData[key];
-  //     }
-  //   }
-  
-   
-  //   table.appendChild(tableBody);
-  
-  
-  //   modalBody.appendChild(table);
-  // }
 
   function openPrintModal(data) {
     // Create a modal dialog or use a library like Swal
@@ -434,8 +458,19 @@ console.info({customers})
       html: getFormattedOrderDetails(data), // Call a function to format the data
       icon: 'success',
       confirmButtonText: 'OK',
+    }).then((result) => {
+     
+      if (result.isConfirmed) {
+        // Refresh the page
+        setRefresh((prevRefresh) => !prevRefresh);
+      // navigate.push("/pos/runningorder");
+      }
     });
   }
+
+  useEffect(() => {
+   
+  }, [refresh]);
 
   function getFormattedOrderDetails(data) {
     // Create an HTML structure to display the order details
@@ -474,13 +509,13 @@ console.info({customers})
     formattedDetails += `<p><strong>Grand Total:</strong> ${data.grandTotal}</p>`;
 
     
-    if (data.tableId) {
-      formattedDetails += `<p><strong>Table ID:</strong> ${data.tableId}</p>`;
-    }
+    // if (data.tableId) {
+    //   formattedDetails += `<p><strong>Table ID:</strong> ${data.tableId}</p>`;
+    // }
     
-    if (data.waiterId) {
-      formattedDetails += `<p><strong>Waiter ID:</strong> ${data.waiterId}</p>`;
-    }
+    // if (data.waiterId) {
+    //   formattedDetails += `<p><strong>Waiter ID:</strong> ${data.waiterId}</p>`;
+    // }
     
     formattedDetails += '</div>';
     
@@ -509,10 +544,12 @@ console.info({customers})
         waiter: selectWaiter,
         customer: selectCustomer,
         table: selectTable,
+        deliveryperson:selectDelivery,
         cart: cart,
         total: totalAmount,
         vat: vatAmount,
-        grandTotal: grandTotal 
+        grandTotal: grandTotal ,
+        delivery:selectDelivery, 
       })
 
       var posData = new FormData();
@@ -520,6 +557,9 @@ console.info({customers})
      if (selectCustomer && selectCustomer._id) {
       posData.append("customers", selectCustomer._id);
   }
+  if (selectDelivery && selectDelivery._id) {
+    posData.append("delivery", selectDelivery._id);
+}
       posData.append("options",options);
       posData.append("grandTotal",grandTotal);
  
@@ -583,7 +623,7 @@ console.info({customers})
               console.log(res);
               openPrintModal(res.data);
             } else {
-              navigate('/posorder');
+              setRefresh((prevRefresh) => !prevRefresh);
             }
           });
         })
@@ -624,7 +664,8 @@ console.info({customers})
         cart: cart,
         total: totalAmount,
         vat: vatAmount,
-        grandTotal: grandTotal 
+        grandTotal: grandTotal,
+        delivery:selectDelivery,  
       })
       console.log(options);
 
@@ -633,6 +674,9 @@ console.info({customers})
      if (selectCustomer && selectCustomer._id) {
       posData.append("customers", selectCustomer._id);
   }
+  if (selectDelivery && selectDelivery._id) {
+    posData.append("delivery", selectDelivery._id);
+}
       posData.append("options",options);
       posData.append("grandTotal",grandTotal);
  
@@ -691,7 +735,7 @@ console.info({customers})
               console.log(res);
               openPrintModal(res.data);
             } else {
-              navigate('/posorder');
+              setRefresh((prevRefresh) => !prevRefresh);
             }
           });
         })
@@ -729,7 +773,7 @@ console.info({customers})
                   <th scope="col">U.Price</th>
                   <th scope="col">Qty</th>
 
-                  <th scope="col">Total</th>
+                  {/* <th scope="col">Total</th> */}
                   <th>Action</th>
                 </tr>
               </thead>
@@ -741,7 +785,7 @@ console.info({customers})
                   <td>{cartProduct.salesprice}</td>
                   <td><button className='btn btn-danger btn-sm cartminus' onClick={() => handleDecrement(cartProduct)}>-</button><input type="text" style={{ width: '20px' }} value={cartProduct.quantity} /><button className='btn btn-success btn-sm cartplus' onClick={() => handleIncrement(cartProduct)}>+</button></td>
 
-                  <td>{cartProduct.totalAmount}</td>
+                  {/* <td>{cartProduct.totalAmount}</td> */}
                   <td>
                     <button className='btn btn-danger btn-sm' onClick={() => removeProduct(cartProduct)}>x</button>
                   </td>
@@ -800,7 +844,10 @@ console.info({customers})
           </div>
         </div>
       </div>
-      <div className="col-sm-7 col-lg-8">
+      <div className="col-lg-1">
+
+      </div>
+      <div className="col-sm-7 col-lg-7">
         <div className="tbl-h">
           <ul className="nav nav-tabs nav-justified" role="tablist">
             <li className="nav-item ">
@@ -809,6 +856,7 @@ console.info({customers})
                 onClick={() => {
                   setSelectWaiter("")
                   setSelectCustomer("")
+                  setSelectDelivery("")
                   setSelectTable("")
                   setOptions("")
                   setTabEnabled({
@@ -819,8 +867,9 @@ console.info({customers})
                   setEnableDinein(false)
                   setShowCustomerTab(false)
                   setShowFoodMenuTab(false)
+                  setShowDeliveryTab(false)
                 }}
-                data-toggle="tab" href="#waiter" role="tab" aria-controls="kiwi2" aria-selected="false">Waiter</a>
+                data-toggle="tab" href="#waiter" role="tab" aria-controls="kiwi2" aria-selected="false">Select Waiter</a>
             </li>
 
             {
@@ -844,6 +893,11 @@ console.info({customers})
                 <a className="nav-link " onClick={handleCustomer} data-toggle="tab" href="#customer" role="tab" aria-controls="duck2" aria-selected="true">Customer</a>
               </li>
             }
+             {
+              showDeliveryTab && <li className="nav-item">
+                <a className="nav-link " onClick={handleDeliveryPerson} data-toggle="tab" href="#delivery" role="tab" aria-controls="duck2" aria-selected="true">Delivery Boy</a>
+              </li>
+            }
             {
               tabEnabled.takeaway && <li className="nav-item">
                 <a className="nav-link " onClick={handleTakeway} data-toggle="tab" href="#dinein" role="tab" aria-controls="duck2" aria-selected="true">Take Away</a>
@@ -861,8 +915,16 @@ console.info({customers})
 
             {/* { */}
               {/* showWaiters && */}
+
+              <input
+        type="text"
+        placeholder="Search waiters..."
+        value={searchWaiter}
+        className="form-control"
+        onChange={handleSearchWaiter}
+      /> <br />
               <div className="row">
-              {waiter.map((wait, index) => (
+              {filteredWaiters.map((wait, index) => (
       <div key={index} className={`col-sm-3 col-md-3 ${selectWaiter === wait ? 'disabled' : ''}`}>
           <div
                className={`menu-box ${selectWaiter ? 'read-only' : 'selectable'}`}
@@ -876,9 +938,17 @@ console.info({customers})
             {/* } */}
           </div>
           <div className="tab-pane " id="table" role="tabpanel" aria-labelledby="duck-tab">
+
+          <input
+        type="text"
+        placeholder="Search Tables..."
+        value={searchTable}
+        className="form-control"
+        onChange={handleSearchTable}
+      /><br />
             <div className="row">
               {
-                table.map((tables, index) => (
+                filteredTables.map((tables, index) => (
                   // <div className="col-sm-3 col-md-3">
                   <div key={index} className={`col-sm-3 col-md-3 ${selectTable === tables ? 'disabled' : ''}`}>
                      <div
@@ -894,16 +964,49 @@ console.info({customers})
             </div>
           </div>
           <div className="tab-pane " id="customer" role="tabpanel" aria-labelledby="duck-tab">
+          <input
+        type="text"
+        placeholder="Search Customers..."
+        value={searchCustomer}
+        className="form-control"
+        onChange={handleSearchCustomer}
+      /><br />
             <div className="row">
               {
-                customers.map((customer, index) => (
+                filteredCustomers.map((customer, index) => (
                   <div className="col-sm-3 col-md-3">
                     <div className="menu-box" onClick={(e) => {
                       setSelectCustomer(customer)
                       setShowFoodMenuTab(true)
+                      setShowDeliveryTab(false)
                     }}>
 
                       <h6>{customer.customername}</h6>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+          <div className="tab-pane " id="delivery" role="tabpanel" aria-labelledby="duck-tab">
+            
+          <input
+        type="text"
+        placeholder="Search Delivery..."
+        value={searchDeliveryPerson}
+        className="form-control"
+        onChange={handleSearchDelivery}
+      /><br />
+            <div className="row">
+              {
+                filteredDelivery.map((delivery, index) => (
+                  <div className="col-sm-3 col-md-3">
+                    <div className="menu-box" onClick={(e) => {
+                      setSelectDelivery(delivery)
+                      setShowFoodMenuTab(true)
+                      setShowCustomerTab(false)
+                    }}>
+
+                      <h6>{delivery.dliveryname}</h6>
                     </div>
                   </div>
                 ))}
@@ -918,7 +1021,7 @@ console.info({customers})
                value={searchTerm}
               onChange={handleSearch}
               className="form-control"
-              />
+              /> 
               </div>
               <ul className="nav nav-pills flex-columns shdw-lft " id="myTab" role="tablist">
                 {distinctCategories.map((category, index) => (

@@ -6,17 +6,21 @@ import Swal from 'sweetalert2';
 import "datatables.net-dt/js/dataTables.dataTables"
 import "datatables.net-dt/css/jquery.dataTables.min.css"
 
-import Login from './Components/userPages/login'
-import Dashboard from './Components/Dashboard/dashboard'
+import { AuthProvider } from './Components/userPages/Auth';
+import PrivateRoute from './PrivateRoutes';
+const Login =lazy(() => import('./Components/userPages/login'));
 
-import AddCategory from './Components/Category/AddCategory'
-import ViewCategory from './Components/Category/ViewCategory'
-import ViewIngredientUnit from './Components/Ingredient/unit/viewIngredientUnit'
-import AddIngredientUnit from './Components/Ingredient/unit/AddIngredientUnit'
-import ViewIngredients from './Components/Ingredient/ingredients/viewingredients'
-import AddIngredients from './Components/Ingredient/ingredients/addingredients'
-import AddVat from './Components/vat/addVat'
-import ViewVat from './Components/vat/viewVat'
+const Dashboard =lazy(()=> import('./Components/Dashboard/dashboard'));
+const AddCategory =lazy(() =>import('./Components/Category/AddCategory'));
+const ViewCategory =lazy(() =>import('./Components/Category/ViewCategory'));
+const ViewIngredientUnit =lazy(() =>import('./Components/Ingredient/unit/viewIngredientUnit'));
+const AddIngredientUnit =lazy(() =>import('./Components/Ingredient/unit/AddIngredientUnit'));
+const ViewIngredients =lazy(() =>import('./Components/Ingredient/ingredients/viewingredients'));
+const AddIngredients =lazy(() =>import('./Components/Ingredient/ingredients/addingredients'));
+const AddVat =lazy(() =>import('./Components/vat/addVat'));
+const ViewVat =lazy(() =>import('./Components/vat/viewVat'));
+
+
 import AddTable from './Components/table/addTable'
 import ViewTable from './Components/table/viewTable'
 import AddFoodCategory from './Components/Foodcategory/addFoodcategory'
@@ -48,17 +52,27 @@ import EditPurchase from './Components/Purchase/editPurchase';
 import DeliveryReport from './Components/Report/deliveryReport';
 import CustomerReport from './Components/Report/customerReport';
 import WaiterReport from './Components/Report/waiterReport';
+import PosNewOrder from './Components/Pos/posNeworder';
+
+
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <Suspense fallback={<Spinner />}>
+    
   <BrowserRouter>
+  <AuthProvider>
+  <Suspense fallback={<Spinner />}>
     <Routes>
-      {/* <Route path='/' element={<Login />} ></Route> */}
-      <Route path='/' element={<Dashboard />} ></Route>
-      <Route path='/dashboard' element={<Dashboard />} ></Route>
+   
+      <Route path='/' element={<Login />} ></Route>
+      {/* <Route path="/logout" element={<Logout />}></Route> */}
+      {/* <Route path='/' element={<Dashboard />} ></Route> */}
+      <Route
+        path="/dashboard"
+         element={<Dashboard />}
+      />
       {/* Food Ingredient Category */}
       <Route path='/addingredientfoodcategory' element={<AddCategory/>}></Route>
       <Route path='/viewingredientfoodcategory' element={<ViewCategory />}></Route>
@@ -92,7 +106,10 @@ function App() {
       <Route path='/editWaiter/:id' element={<EditWaiter />}></Route>
       {/* Pos */}
       <Route path='/pos' element={<Pos />}></Route>
+
+      
       <Route path='/posorder' element={<ViewPosOrder />}></Route>
+      <Route path='/pos/neworder' element={<PosNewOrder />}></Route>
       <Route path='/posorderdetails/:id' element={<ViewPosOrderdetails />}></Route>
 
       {/* Customer  */}
@@ -120,11 +137,14 @@ function App() {
       <Route path='/waiterReport' element={<WaiterReport />}></Route>
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
+   
     </Routes>
+    </Suspense>
+    </AuthProvider>
   </BrowserRouter>
 
 
-</Suspense>
+
   )
 }
 

@@ -3,34 +3,38 @@ import { useState } from 'react'
 import axios from 'axios'
 import { redirect, useNavigate } from "react-router-dom";
 import apiConfig from '../layouts/base_url';
+import { useAuth } from './Auth';
 function  Login() {
 
   const [email,setEmail]=useState()
   const [password,setPassword] =useState()
   const navigate = useNavigate();
+  const { login } = useAuth();
   //const navigate = redirect();
  
-const handleSubmit =(e) =>{
-  e.preventDefault()
-  axios.post(`${apiConfig.baseURL}/api/user/login`,{email,password})
-  .then(result => {
-   if(result.data)
-   {
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-   // localStorage.setItem('type', res.data.id)
-   
-    localStorage.setItem('token', res.data.token)
-    navigate('/dashboard')
-   }
-   else{
-    navigate('/')
-   }
-   //
-  })
-  .catch(err =>console.log(err))
-  
+    axios
+      .post(`${apiConfig.baseURL}/api/user/login`, { email, password })
+      .then((response) => {
+        if (response.data) {
+          // Destructure the data from the response
+          const { _id, firstname, lastname, token } = response.data;
+          
+         
+          localStorage.setItem('token', token);
 
-}
+        
+          navigate('/dashboard');
+        } else {
+          // Handle login failure (if needed)
+          navigate('/');
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
 
 
 

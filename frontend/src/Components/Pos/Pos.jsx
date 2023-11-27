@@ -12,17 +12,10 @@ import Swal from 'sweetalert2';
 import PosNewOrder from "./posNeworder";
 import PosHoldingOrder from "./posHoldingorder";
 import PosTodayOrder from "./posTodayorder";
-
+import { FaShoppingCart, FaHistory, FaPause,FaRegCalendarAlt    } from 'react-icons/fa';
 
 const Pos =() =>{
 
-    const showSweetAlert = () => {
-        Swal.fire({
-          title: 'Hello, SweetAlert2!',
-          text: 'This is a SweetAlert2 popup in a React component.',
-          icon: 'success',
-        });
-      };
 
 
 
@@ -40,7 +33,7 @@ const Pos =() =>{
                         <div className="w-100 d-inline-block text-center pb-4"> <Link to="/dashboard" ><img src="assets/images/pos/vertics-logo.png" className="img-fluid" /></Link> </div>
                         </div>
                         <div className="col-md-10 main-content">
-            <div className="">
+            <div className="menumain">
               <ul className="nav nav-tabs nav-justified" role="tablist">
                 <li className="nav-item ">
                   <a
@@ -52,7 +45,8 @@ const Pos =() =>{
                     aria-selected={activeTab === 'neworder'}
                     onClick={() => setActiveTab('neworder')}
                   >
-                    New Order
+                    <FaShoppingCart className="mr-1" /> New Order
+        
                   </a>
                 </li>
                 <li className="nav-item">
@@ -65,10 +59,10 @@ const Pos =() =>{
                     aria-selected={activeTab === 'runningorder'}
                     onClick={() => setActiveTab('runningorder')}
                   >
-                    Running Order
+                  <FaHistory className="mr-2" />  Running Order
                   </a>
                 </li>
-                <li className="nav-item">
+                {/* <li className="nav-item">
                   <a
                     className={`nav-link ${activeTab === 'holdingorder' ? 'active' : ''}`}
                     data-toggle="tab"
@@ -78,11 +72,38 @@ const Pos =() =>{
                     aria-selected={activeTab === 'holdingorder'}
                     onClick={() => setActiveTab('holdingorder')}
                   >
-                    Holding Order
+                    <FaPause   className="mr-2" /> Holding Order
+                  </a>
+                </li> */}
+                
+                <li className="nav-item">
+                <a
+                    className={`nav-link ${activeTab === 'onlineorder' ? 'active' : ''}`}
+                    data-toggle="tab"
+                    href="#onlineorder"
+                    role="tab"
+                    aria-controls="onlineorder"
+                    aria-selected={activeTab === 'onlineorder'}
+                    onClick={() => setActiveTab('onlineorder')}
+                  >
+                  <FaRegCalendarAlt className="mr-1" />  Online Order
                   </a>
                 </li>
                 <li className="nav-item">
-                  <a
+                <a
+                    className={`nav-link ${activeTab === 'deliverysession' ? 'active' : ''}`}
+                    data-toggle="tab"
+                    href="#deliverysession"
+                    role="tab"
+                    aria-controls="deliverysession"
+                    aria-selected={activeTab === 'deliverysession'}
+                    onClick={() => setActiveTab('deliverysession')}
+                  >
+                  <FaRegCalendarAlt className="mr-2" />  Delivery Session
+                  </a>
+                </li>
+                <li className="nav-item">
+                <a
                     className={`nav-link ${activeTab === 'todayorder' ? 'active' : ''}`}
                     data-toggle="tab"
                     href="#todayorder"
@@ -91,14 +112,50 @@ const Pos =() =>{
                     aria-selected={activeTab === 'todayorder'}
                     onClick={() => setActiveTab('todayorder')}
                   >
-                    Today Order
+                  <FaRegCalendarAlt className="mr-2" /> settlment Report
+                  </a>
+                </li>
+                {/* <li className="nav-item">
+                <a
+                    className={`nav-link ${activeTab === 'cashdrop' ? 'active' : ''}`}
+                    data-toggle="tab"
+                    href="#cashdrop"
+                    role="tab"
+                    aria-controls="cashdrop"
+                    aria-selected={activeTab === 'cashdrop'}
+                    onClick={() => setActiveTab('cashdrop')}
+                  >
+                  <FaRegCalendarAlt className="mr-2" /> Cash Drop/Out
+                  </a>
+                </li>
+
+                <li className="nav-item">
+                <a
+                    className={`nav-link ${activeTab === 'opendrawer' ? 'active' : ''}`}
+                    data-toggle="tab"
+                    href="#opendrawer"
+                    role="tab"
+                    aria-controls="opendrawer"
+                    aria-selected={activeTab === 'opendrawer'}
+                    onClick={() => setActiveTab('opendrawer')}
+                  >
+                  <FaRegCalendarAlt className="mr-2" />Open Drawer
                   </a>
                 </li>
                 <li className="nav-item">
-                  <a href="#">
-                    <img className="poslogout" src="assets/images/pos/login.png" />
+                <a
+                    className={`nav-link ${activeTab === 'invoicereport' ? 'active' : ''}`}
+                    data-toggle="tab"
+                    href="#invoicereport"
+                    role="tab"
+                    aria-controls="invoicereport"
+                    aria-selected={activeTab === 'invoicereport'}
+                    onClick={() => setActiveTab('invoicereport')}
+                  >
+                  <FaRegCalendarAlt className="mr-2" /> Invoice Report
                   </a>
-                </li>
+                </li> */}
+               
               </ul>
             </div>
           </div>
