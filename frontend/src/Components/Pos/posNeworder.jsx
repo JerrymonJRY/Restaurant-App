@@ -12,6 +12,7 @@ import { FaHandHoldingDroplet } from "react-icons/fa6";
 import { RiArchiveDrawerLine } from "react-icons/ri";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
 import ReactToPrint   from "react-to-print";
+import { MdBookOnline } from "react-icons/md";
 
 const PosNewOrder = () => {
 
@@ -919,9 +920,9 @@ const handleTabClick =() =>{
           </div>
         </div>
       </div>
-      <div className="col-lg-auto">
+      <div className="col-lg-auto" style={{ background: 'antiquewhite', }}>
       <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-  <a class="nav-link active text-center navleft" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">
+  <a class="nav-link active text-center navleft" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true" style={{ marginTop: '10px' }}>
   <FaHistory className="mr-2" /><br /> Clear
   </a>
   <a

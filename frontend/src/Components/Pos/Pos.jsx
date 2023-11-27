@@ -13,7 +13,8 @@ import PosNewOrder from "./posNeworder";
 import PosHoldingOrder from "./posHoldingorder";
 import PosTodayOrder from "./posTodayorder";
 import { FaShoppingCart, FaHistory, FaPause,FaRegCalendarAlt    } from 'react-icons/fa';
-
+import { MdBookOnline } from "react-icons/md";
+import { IoMdToday } from "react-icons/io";
 const Pos =() =>{
 
 
@@ -86,7 +87,7 @@ const Pos =() =>{
                     aria-selected={activeTab === 'onlineorder'}
                     onClick={() => setActiveTab('onlineorder')}
                   >
-                  <FaRegCalendarAlt className="mr-1" />  Online Order
+                 <MdBookOnline  className="mr-1" />  Online Order
                   </a>
                 </li>
                 <li className="nav-item">
@@ -112,7 +113,7 @@ const Pos =() =>{
                     aria-selected={activeTab === 'todayorder'}
                     onClick={() => setActiveTab('todayorder')}
                   >
-                  <FaRegCalendarAlt className="mr-2" /> settlment Report
+                  <IoMdToday  className="mr-2" /> settlment Report
                   </a>
                 </li>
                 {/* <li className="nav-item">
