@@ -11,11 +11,19 @@ const PosRunningOrder = ()=>{
     const [posRunningorder, setPosRunningorder] = useState([]);
     const [data, setData] = useState(null);
     const [kotdata,setkotData] =useState(null);
+    const [splitdata,setSplitData] =useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showkotModal,setShowKotModal] =useState(false);
+    const [showSplitModal,setShowSplitModal] =useState(false);
     const [payments,setPays] =useState();
  const [searchTerm, setSearchTerm] = useState('');
    const [refresh, setRefresh] = useState(false);
+   const [checkedOrders, setCheckedOrders] = useState([]);
+   const [mergdata,setMergedata] =useState(null);
+   const [mergeModal,setMergeModal] =useState(false);
+
+
+  
     const handlePays = (event) => {
       setPays(event.target.value);
       
@@ -133,7 +141,121 @@ const handlekot =(id) =>
     setSearchTerm(e.target.value);
   };
 
+  const handlesplit =(id)=>
+  {
+    const url = `${apiConfig.baseURL}/api/pos/getsplit/${id}`;
+    axios.get(url)
+    .then((response) => {
+      setSplitData(response.data);
+      console.log(response.data);
+      setShowSplitModal(true);
+    })
+    
+    .catch((error) => {
+      console.error('Error fetching data:', error);
+    });
+  
+  }
 
+  const totalGrandTotal = Array.isArray(splitdata)
+  ? splitdata.reduce((total, order) => {
+      // Sum up the quantities of each cartItem in the order
+      const orderTotal = order.cart.reduce((orderTotal, cartItem) => {
+        const itemQuantity = parseFloat(cartItem.quantity);
+        return !isNaN(itemQuantity) ? orderTotal + itemQuantity : orderTotal;
+      }, 0);
+
+      return total + orderTotal;
+    }, 0)
+  : 0;
+
+  const totalGrandTotals = Array.isArray(splitdata)
+  ? splitdata.reduce((total, order) => {
+      // Sum up the quantities of each cartItem in the order
+      const orderTotal = order.cart.reduce((orderTotal, cartItem) => {
+        const itemQuantity = parseFloat(cartItem.quantity);
+        return !isNaN(itemQuantity) ? orderTotal + itemQuantity : orderTotal;
+      }, 0);
+
+      return total + orderTotal;
+    }, 0)
+  : 0;
+  const optionValues = Array.from({ length: totalGrandTotals - 1 }, (_, index) => index + 2);
+
+  const [selectedSplitValue, setSelectedSplitValue] = useState('');
+  const [textInputs, setTextInputs] = useState([]);
+  const [foodtextInputs, setfoodTextInputs] = useState([]);
+
+  const handleSplitChange = (event) => {
+    const value = parseInt(event.target.value, 10);
+    setSelectedSplitValue(value);
+
+    // Create an array with 'value' number of elements
+   const newInputs = Array.from({ length: value }, (_, index) => index + 1);
+  setTextInputs(newInputs);
+  //setfoodTextInputs(Array(value).fill(0));
+  };
+
+ const handleQuantityDecrease = (orderIndex, cartItemIndex, event) => {
+  
+  if (selectedSplitValue > 0) {
+
+    const updatedSplitData = [...splitdata];
+    const order = updatedSplitData[orderIndex];
+    const cartItem = order.cart[cartItemIndex];
+
+    
+    cartItem.quantity = Math.max(0, cartItem.quantity - 1);
+
+    
+    setSplitData(updatedSplitData);
+
+   
+    const updatedTextInputs = [...textInputs];
+    updatedTextInputs[cartItemIndex] = Math.max(0, updatedTextInputs[cartItemIndex] - 1);
+    setTextInputs(updatedTextInputs);
+
+  
+    const updatedFoodTextInputs = [...foodtextInputs];
+    updatedFoodTextInputs[cartItemIndex] = Math.max(0, updatedFoodTextInputs[cartItemIndex] - 1);
+    setfoodTextInputs(updatedFoodTextInputs);
+  }
+}
+
+
+
+
+  const handleCheckboxChange = (orderId) => {
+    setCheckedOrders((prevCheckedOrders) => {
+      if (prevCheckedOrders.includes(orderId)) {
+        return prevCheckedOrders.filter((id) => id !== orderId);
+      } else {
+        return [...prevCheckedOrders, orderId];
+      }
+    });
+  };
+
+  const handleMergeRequest = async () => {
+
+    try {
+      const response = await axios.post(`${apiConfig.baseURL}/api/pos/getmerge/`, {
+         ids:checkedOrders
+      });
+      setMergedata(response.data);
+      setMergeModal(true);
+     // console.log(mergdata);
+
+     
+    //  const { price, ordernumber } = response.data;
+      // setModalContent(`Order Number: ${ordernumber}, Price: ${price}`);
+      // setShowModal(true);
+    } catch (error) {
+     
+      console.error('Error:', error);
+    }
+  }
+
+ 
     return(
         <>
         <div className="container">
@@ -141,7 +263,7 @@ const handlekot =(id) =>
       
         <div className="row">
 
-       <div className="col-md-12">
+       <div className="col-md-10">
         <div className="form-group">
         <input
           type="text"
@@ -152,6 +274,9 @@ const handlekot =(id) =>
         />
         </div>
        </div>
+       <div className="col-md-2">
+       <a class="btn btn-outline-primary" onClick={handleMergeRequest}>Merge</a>
+       </div>
         
      
         {
@@ -159,7 +284,19 @@ const handlekot =(id) =>
             <div className="col-md-3">
                 <div className="menu-boxs">
                 <div className="menu-div">
-                  <h5 className="text-center">OrderID:<span>{order.ordernumber}</span></h5>
+                <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input text-right"
+                  id={`checkbox-${order._id}`}
+                  onChange={() => handleCheckboxChange(order._id)}
+                  checked={checkedOrders.includes(order._id)}
+                />
+    
+  </div>
+
+ 
+                  <h5 className="text-center"><span>{order.ordernumber}</span></h5>
                
                   <h6 className="text-center">Table:{order.table  ?order.table.tablename :'No Table'}</h6>
                   <h6 className="text-center">Table:{order.waiter.waitername}</h6>
@@ -172,7 +309,8 @@ const handlekot =(id) =>
              <a class="btn btn-outline-primary" onClick={(e) => handleComplete(order._id)} href="#">Payment</a>
              <a class="btn btn-outline-primary" onClick={(e) => handlekot(order._id)} href="#">KOT</a>
              <a class="btn btn-outline-primary" href="#">Edit</a>
-   
+             <a class="btn btn-outline-primary" onClick={(e) => handlesplit(order._id)} href="#">Split</a>
+    
          </div>
     </div>
                 </div>
@@ -270,10 +408,7 @@ data.map((order) => (
 
     {/* Setkot Table */}
     <div>
-    {/* <useReactToPrint
-        trigger={() => <button onClick={handlePrint}>Print</button>}
-        content={() => componentRef.current}
-      /> */}
+   
  <div className={`modal ${showkotModal ? 'show' : ''}`} tabIndex="-1" role="dialog" style={{ display: showkotModal ? 'block' : 'none' }} ref={kotModalRef}>
         <div className="modal-dialog" role="document">
           <div className="modal-content">
@@ -342,6 +477,8 @@ kotdata.map((order) => (
               )
             }
             </div>
+
+           
          
           </div>
         </div>
@@ -350,6 +487,184 @@ kotdata.map((order) => (
       
       
     </div>
+
+    {/* Split Modal */}
+    <div>
+   
+   <div className={`modal ${showSplitModal ? 'show' : ''}`} tabIndex="-1" role="dialog" style={{ display: showSplitModal ? 'block' : 'none' }} ref={kotModalRef}>
+   <div className="modal-dialog modal-lg" role="document"  style={{ maxWidth: '1200px' }}>
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Split Order</h5>
+                <button type="button" className="close" onClick={() => setShowModal(false)}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                {/* Display the data here */}
+                <div className="row">
+                <div className="col-md-4">
+                {Array.isArray(splitdata) && splitdata.length > 0 ? (
+  splitdata.map((order,orderIndex) => (
+
+    
+                 <div key={order.id}>
+       
+                  <table className="table   table-bordered">
+                  <thead>
+                  <tr>
+                      <th>Si No</th>
+                      <th>Food Name</th>
+                     
+                   
+                      </tr>
+                  </thead>
+                  <tbody>
+                   
+                    {order.cart.map((cartItem,cartItemIndex) => (
+                  <tr key={cartItem.foodmenuId}>
+                    <td>{cartItemIndex + 1}</td>
+                    <td onClick={(event) => handleQuantityDecrease(orderIndex, cartItemIndex,event)}>
+                      {cartItem.menuItemDetails.foodmenuname} - ({cartItem.quantity})</td>
+                    
+
+                  
+                    {/* Render other cart item details here */}
+                  </tr>
+                ))}
+                  
+                  </tbody>
+                  </table>
+                 
+  
+             
+  
+               </div>
+             
+                ))
+                ):(
+                  <p>No data</p>
+                )
+              }
+                </div>
+                <div className="col-md-8">
+                  <label htmlFor="">Select Number of Order</label>
+                <select className="form-control" onChange={handleSplitChange} value={selectedSplitValue}>
+                <option>Select Method</option>
+            {optionValues.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+
+          <div className="row">
+          {textInputs.map((index) => (
+            
+               <div className="col-md-6">
+                  <div key={index}>
+                    <div className="card">
+                      <div className="card-header">
+
+                      </div>
+                      <div className="card-body">
+                          <table className="table table-bordered">
+                            <thead>
+                              <th>Si No</th>
+                              <th>Food Name</th>
+                              <th>Quantity</th>
+                            </thead>
+                            <tbody>
+                  {foodtextInputs.map((value, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>Food Item</td>
+                      <td>{value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+
+                          </table>
+                      </div>
+                    </div>
+                 </div>
+               </div>
+
+          
+      
+      ))}
+        </div>
+                </div>
+                </div>
+    
+
+
+              </div>
+
+              <div className="modal-footer">
+             
+             <button type="button" className="btn btn-outline-secondary" onClick={() => setShowSplitModal(false)}>Close</button>
+           </div>
+           
+            </div>
+          </div>
+        </div>
+        <div className={`modal-backdrop ${showSplitModal ? 'show' : ''}`} style={{ display: showSplitModal ? 'block' : 'none' }}></div>
+        
+        
+      </div>
+
+      {/* Merge Modal */}
+
+      <div>
+   
+   <div className={`modal ${mergeModal ? 'show' : ''}`} tabIndex="-1" role="dialog" style={{ display: mergeModal ? 'block' : 'none' }} ref={kotModalRef}>
+   <div className="modal-dialog modal-lg" role="document"  style={{ maxWidth: '1200px' }}>
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Merge Orders</h5>
+                <button type="button" className="close" onClick={() => setShowModal(false)}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                  <table className="table table-bordered">
+                      <thead>
+                        <th>Si No</th>
+                        <th>Order Number</th>
+                        <th> Amount</th>
+                        <th>Vat</th>
+                        <th>Grand Total</th>
+                      </thead>
+                      <tbody>
+                      { mergdata ? (
+mergdata.map((order,key) => (
+  <tr key={order._id}>
+        <td>{key + 1}</td>
+        <td>{order.ordernumber}</td>
+        <td>{order.total}</td>
+        <td>{order.vatAmount}</td>
+        <td>{order.grandTotal}</td>
+    </tr>
+           
+              ))
+              ):(
+                <p>No data</p>
+              )
+            }
+                      </tbody>
+                  </table>
+              </div>
+  
+             
+           
+            </div>
+          </div>
+        </div>
+        <div className={`modal-backdrop ${mergeModal ? 'show' : ''}`} style={{ display: mergeModal ? 'block' : 'none' }}></div>
+        
+        
+      </div>
     </div>
         </>
     );

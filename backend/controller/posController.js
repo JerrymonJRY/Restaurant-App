@@ -808,6 +808,144 @@ const insertQuickpay =asyncHandler(async(req,res) =>{
     res.status(500).json({ error: 'An error occurred while inserting data' });
   }
 
+});
+
+
+const getSplit =asyncHandler(async(req,res) =>
+{
+  const { id } = req.params;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid ObjectId' });
+    }
+    const pos = await Pos.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(id), // Match documents with the specified _id
+        },
+      },
+      {
+        $unwind: "$cart" // Flatten the cart array
+      },
+      {
+        $lookup: {
+          from: "foodmenus",
+          localField: "cart.foodmenuId",
+          foreignField: "_id",
+          as: "menuItemDetails"
+        },
+      },
+      {
+        $unwind: "$menuItemDetails" // Unwind the menuItemDetails array
+      },
+      {
+        $lookup: {
+          from: "customers",
+          localField: "customers",
+          foreignField: "_id",
+          as: "customerDetails"
+        },
+      },
+      {
+        $unwind: {
+          path: "$customerDetails",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        },
+      },
+      {
+        $lookup: {
+          from: "waiters",
+          localField: "waiterId",
+          foreignField: "_id",
+          as: "waiterDetails"
+        },
+      },
+      {
+        $unwind: "$waiterDetails"
+      },
+      {
+        $lookup: {
+          from: "tables",
+          localField: "tableId",
+          foreignField: "_id",
+          as: "tableDetails"
+        },
+      },
+      {
+        // $unwind: "$tableDetails"
+        $unwind: {
+          path: "$tableDetails",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        },
+      },
+      {
+        $lookup: {
+          from: "delivery",
+          localField: "delivery",
+          foreignField: "_id",
+          as: "deliveryDetails"
+        }
+      },
+      {
+        $unwind: {
+          path: "$deliveryDetails",
+          preserveNullAndEmptyArrays: true // Keep customerDetails even if it's null
+        }
+      },
+      {
+        $group: {
+          _id: "$_id",
+          ordernumber: { $first: "$ordernumber" },
+          options: { $first: "$options" },
+          total: { $first: "$total" },
+          grandTotal: { $first: "$grandTotal" },
+          vatAmount: { $first: "$vatAmount" },
+          createdAt: { $first: "$createdAt" },
+          updatedAt: { $first: "$updatedAt" },
+          cart: {
+            $push: {
+              foodmenuId: "$cart.foodmenuId",
+              salesprice: "$cart.salesprice",
+              quantity: "$cart.quantity",
+              menuItemDetails: "$menuItemDetails"
+            }
+          },
+          customerDetails: { $first: "$customerDetails" },
+  
+          waiterDetails: { $first: "$waiterDetails" },
+          deliveryDetails :{ $first : "$deliveryDetails" }
+        }
+      },
+    ]);
+  
+    res.json(pos);
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+
+
+});
+
+
+const getMerge =asyncHandler(async(req,res) =>{
+  const selectedIds = req.body.ids;
+
+  console.log(selectedIds);
+
+  try {
+   
+    const responseData = await Pos.find({ _id: { $in: selectedIds } });
+
+    // Respond with the result
+    res.json(responseData);
+    console.log(responseData);
+  } catch (error) {
+    // Handle errors
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 })
 
 
@@ -827,5 +965,7 @@ module.exports =
   insertPoshold,
   getHold,
   todayOrder,
-  insertQuickpay
+  insertQuickpay,
+  getSplit,
+  getMerge
 };

@@ -16,7 +16,9 @@ const {getposCategory,
     insertPoshold,
     getHold,
     todayOrder,
-    insertQuickpay
+    insertQuickpay,
+    getSplit,
+    getMerge
 } =require('../controller/posController');
 
 
@@ -36,6 +38,8 @@ router.post('/createHold',insertPoshold);
 router.get('/gethold',getHold);
 router.get('/gettodayOrder',todayOrder);
 router.post('/createQuickpay',insertQuickpay);
+router.get('/getsplit/:id',getSplit);
+router.post('/getmerge',getMerge);
 
 
 

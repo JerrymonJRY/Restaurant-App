@@ -6,13 +6,19 @@ import { redirect, useNavigate, Link } from "react-router-dom";
 import Swal from 'sweetalert2';
 import apiConfig from '../layouts/base_url';
 import { FaShoppingCart, FaHistory, FaPause,FaRegCalendarAlt    } from 'react-icons/fa';
-import { TbToolsKitchen3 } from "react-icons/tb";
+import { TbToolsKitchen3,TbChefHat  } from "react-icons/tb";
 import { BsFillPauseCircleFill } from "react-icons/bs";
-import { FaHandHoldingDroplet } from "react-icons/fa6";
+import { FaHandHoldingDroplet,FaCcDinersClub  } from "react-icons/fa6";
 import { RiArchiveDrawerLine } from "react-icons/ri";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
+import { SiTablecheck } from "react-icons/si";
+import { IoFastFoodSharp } from "react-icons/io5";
+import { CiDeliveryTruck } from "react-icons/ci";
 import ReactToPrint   from "react-to-print";
 import { MdBookOnline } from "react-icons/md";
+import { FaUserAlt } from "react-icons/fa";
+import { MdDeliveryDining } from "react-icons/md";
+import { MdOutlineTakeoutDining } from "react-icons/md";
 
 const PosNewOrder = () => {
 
@@ -81,6 +87,27 @@ const handleSearch = (e) => {
 const handleSearchWaiter =(e) =>{
   setSearchWaiter(e.target.value);
 }
+
+const handleClearClick = () => {
+  setSelectWaiter("");
+  setSelectCustomer("");
+  setSelectDelivery("");
+  setSelectTable("");
+  setOptions("");
+  setTabEnabled({
+    dineIn: false,
+    takeaway: false,
+    delivery: false,
+  });
+  setEnableDinein(false);
+  setShowCustomerTab(false);
+  setShowFoodMenuTab(false);
+  setShowDeliveryTab(false);
+  setCart([]);
+
+  // navigate("/pos");
+
+};
 const filteredWaiters = waiter.filter((wait) =>
   wait.waitername.toLowerCase().includes(searchWaiter.toLowerCase())
 );
@@ -922,7 +949,10 @@ const handleTabClick =() =>{
       </div>
       <div className="col-lg-auto" style={{ background: 'antiquewhite', }}>
       <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-  <a class="nav-link active text-center navleft" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true" style={{ marginTop: '10px' }}>
+  <a class="nav-link active text-center navleft" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true" style={{ marginTop: '10px' }}
+  onClick={handleClearClick}
+  
+  >
   <FaHistory className="mr-2" /><br /> Clear
   </a>
   <a
@@ -983,43 +1013,43 @@ const handleTabClick =() =>{
                   setShowFoodMenuTab(false)
                   setShowDeliveryTab(false)
                 }}
-                data-toggle="tab" href="#waiter" role="tab" aria-controls="kiwi2" aria-selected="false">Select Waiter</a>
+                data-toggle="tab" href="#waiter" role="tab" aria-controls="kiwi2" aria-selected="false"><TbChefHat className="mr-2" />Select Waiter</a>
             </li>
 
             {
               tabEnabled.dineIn && <li className="nav-item">
-                <a className="nav-link " onClick={handleDinein} data-toggle="tab" href="#dinein" role="tab" aria-controls="duck2" aria-selected="true">Dine In</a>
+                <a className="nav-link " onClick={handleDinein} data-toggle="tab" href="#dinein" role="tab" aria-controls="duck2" aria-selected="true"><FaCcDinersClub className="mr-2" />Dine In</a>
               </li>
             }
             {
               enableDinein && <li className="nav-item">
-                <a className="nav-link " data-toggle="tab" href="#table" role="tab" aria-controls="duck2" aria-selected="true">Table</a>
+                <a className="nav-link " data-toggle="tab" href="#table" role="tab" aria-controls="duck2" aria-selected="true"><SiTablecheck className="mr-2" />Table</a>
               </li>
             }
             {
               tabEnabled.delivery && <li className="nav-item">
-                <a className="nav-link " onClick={handleDelivery} data-toggle="tab" href="#dinein" role="tab" aria-controls="duck2" aria-selected="true">Delivery</a>
+                <a className="nav-link " onClick={handleDelivery} data-toggle="tab" href="#dinein" role="tab" aria-controls="duck2" aria-selected="true"><CiDeliveryTruck className="mr-2" />Delivery</a>
               </li>
             }
 
             {
               showCustomerTab && <li className="nav-item">
-                <a className="nav-link " onClick={handleCustomer} data-toggle="tab" href="#customer" role="tab" aria-controls="duck2" aria-selected="true">Customer</a>
+                <a className="nav-link " onClick={handleCustomer} data-toggle="tab" href="#customer" role="tab" aria-controls="duck2" aria-selected="true"><FaUserAlt className="mr-2"  />Customer</a>
               </li>
             }
              {
               showDeliveryTab && <li className="nav-item">
-                <a className="nav-link " onClick={handleDeliveryPerson} data-toggle="tab" href="#delivery" role="tab" aria-controls="duck2" aria-selected="true">Delivery Boy</a>
+                <a className="nav-link " onClick={handleDeliveryPerson} data-toggle="tab" href="#delivery" role="tab" aria-controls="duck2" aria-selected="true"><MdDeliveryDining className="mr-2" />Delivery Boy</a>
               </li>
             }
             {
               tabEnabled.takeaway && <li className="nav-item">
-                <a className="nav-link " onClick={handleTakeway} data-toggle="tab" href="#dinein" role="tab" aria-controls="duck2" aria-selected="true">Take Away</a>
+                <a className="nav-link " onClick={handleTakeway} data-toggle="tab" href="#dinein" role="tab" aria-controls="duck2" aria-selected="true"><MdOutlineTakeoutDining className="mr-2" />Take Away</a>
               </li>
             }
             {
               showFoodMenuTab && <li className="nav-item">
-              <a className="nav-link "  onClick={handleMenu}  data-toggle="tab" href="#foodmenu" role="tab" aria-controls="duck2" aria-selected="true">Food Menu</a>
+              <a className="nav-link "  onClick={handleMenu}  data-toggle="tab" href="#foodmenu" role="tab" aria-controls="duck2" aria-selected="true"><IoFastFoodSharp className="mr-2" />Food Menu</a>
           </li>
             }
           </ul>
@@ -1044,7 +1074,7 @@ const handleTabClick =() =>{
                className={`menu-box ${selectWaiter ? 'read-only' : 'selectable'}`}
             onClick={() => handleWaiter(wait)}
           >
-            <h6>{wait.waitername}</h6>
+            <h6><TbChefHat className="mr-2" /> <br />{wait.waitername}</h6>
           </div>
         </div>
       ))}
@@ -1071,7 +1101,7 @@ const handleTabClick =() =>{
                       setShowFoodMenuTab(true)
                     }}>
 
-                      <h6>{tables.tablename}</h6>
+                      <h6><SiTablecheck className="mr-2" /><br />{tables.tablename}</h6>
                     </div>
                   </div>
                 ))}
@@ -1095,7 +1125,7 @@ const handleTabClick =() =>{
                       setShowDeliveryTab(false)
                     }}>
 
-                      <h6>{customer.customername}</h6>
+                      <h6><FaUserAlt className="mr-2"  /><br />{customer.customername}</h6>
                     </div>
                   </div>
                 ))}
@@ -1120,7 +1150,7 @@ const handleTabClick =() =>{
                       setShowCustomerTab(false)
                     }}>
 
-                      <h6>{delivery.dliveryname}</h6>
+                      <h6><MdDeliveryDining className="mr-2" /><br />{delivery.dliveryname}</h6>
                     </div>
                   </div>
                 ))}
