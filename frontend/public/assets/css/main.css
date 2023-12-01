@@ -421,7 +421,7 @@ a.nav-link.nav-link-waiter.active img{
   .navleft
   {
     color: #000 !important;
-    background-color: #fff !important;
+    background-color: antiquewhite !important;
     margin-top: 20px;
 
   }
@@ -438,4 +438,8 @@ a.nav-link.nav-link-waiter.active img{
 
     padding-top: 11px;
     margin-left: 142px;
+}
+.pos
+{
+    color: #000 !important;
 }

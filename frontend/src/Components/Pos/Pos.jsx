@@ -100,7 +100,7 @@ const Pos =() =>{
                     aria-selected={activeTab === 'deliverysession'}
                     onClick={() => setActiveTab('deliverysession')}
                   >
-                  <FaRegCalendarAlt className="mr-2" />  Delivery Session
+                  <FaRegCalendarAlt className="mr-2" />  Delivery Settlement
                   </a>
                 </li>
                 <li className="nav-item">
@@ -113,7 +113,7 @@ const Pos =() =>{
                     aria-selected={activeTab === 'todayorder'}
                     onClick={() => setActiveTab('todayorder')}
                   >
-                  <IoMdToday  className="mr-2" /> settlment Report
+                  <IoMdToday  className="mr-2" /> Session Report
                   </a>
                 </li>
                 {/* <li className="nav-item">
